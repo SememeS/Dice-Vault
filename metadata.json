@@ -1,0 +1,6 @@
+{
+  "name": "D&D Dice Roller",
+  "description": "D&D dice rolling application that allows users to customize their dice sets and view historical logs.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
