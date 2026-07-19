@@ -469,22 +469,19 @@ fun ActiveRollingTray(
         label = "shake"
     )
 
+    val trayShape = getCardShape(36.dp)
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .defaultMinSize(minHeight = 260.dp)
             .padding(horizontal = 16.dp, vertical = 12.dp)
-            .shadow(8.dp, RoundedCornerShape(36.dp))
+            .then(getCardModifier(trayShape, 8.dp))
             .background(
                 brush = Brush.verticalGradient(
                     colors = listOf(DiceTrayGradientStart, DiceTrayGradientEnd)
                 ),
-                shape = RoundedCornerShape(36.dp)
-            )
-            .border(
-                width = 1.dp,
-                color = Color(0xFF49454F),
-                shape = RoundedCornerShape(36.dp)
+                shape = trayShape
             )
             .padding(24.dp)
             .offset(x = shakeOffset),
@@ -2485,6 +2482,8 @@ fun SettingsDialog(
                                             CrimsonAccent = preset.errorAccent
                                             TextPrimary = preset.textPrimary
                                             TextSecondary = preset.textSecondary
+                                            DiceTrayGradientStart = preset.cardBg
+                                            DiceTrayGradientEnd = preset.bg
                                         }
                                         .border(
                                             width = if (isSelected) 1.5.dp else 0.5.dp,
