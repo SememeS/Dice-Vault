@@ -53,26 +53,26 @@ import java.util.*
 // Styling Color Tokens
 var DarkSlateBg by mutableStateOf(Color(0xFF1C1B1F)) // Sophisticated Dark Bg
 var DarkCardBg by mutableStateOf(Color(0xFF2B2930))  // Sophisticated Dark Surface/Card
-var GoldAccent by mutableStateOf(Color(0xFFD0BCFF))  // Sophisticated Dark Pastel Violet Accent
-var DarkGoldAccent by mutableStateOf(Color(0xFF4F378B)) // Sophisticated Dark Container Purple
-var AmberGlow by mutableStateOf(Color(0xFFE8DEF8))   // Sophisticated Dark Secondary Accent Lavender
-var CrimsonAccent by mutableStateOf(Color(0xFFF2B8B5)) // Sophisticated Dark Coral Red
+var GoldAccent by mutableStateOf(Color(0xFF7E57C2))  // Sophisticated Dark Pastel Violet Accent
+var DarkGoldAccent by mutableStateOf(Color(0xFF311B92)) // Sophisticated Dark Container Purple
+var AmberGlow by mutableStateOf(Color(0xFF4527A0))   // Sophisticated Dark Secondary Accent Lavender
+var CrimsonAccent by mutableStateOf(Color(0xFFD81B60)) // Sophisticated Dark Coral Red
 var TextPrimary by mutableStateOf(Color(0xFFE6E1E5))   // Sophisticated Dark Primary Text
 var TextSecondary by mutableStateOf(Color(0xFFCAC4D0)) // Sophisticated Dark Secondary Text
-var AdvantageColor by mutableStateOf(Color(0xFF2E7D32)) // Advantage Roll Button
-var DisadvantageColor by mutableStateOf(Color(0xFFC62828)) // Disadvantage Roll Button
-var DiceRollResultColor by mutableStateOf(Color(0xFFD0BCFF)) // Dice Roll Result Color
-var DiceRollAnimationColor by mutableStateOf(Color(0xFFD0BCFF)) // Dice Roll Animation Color
-var D4Color by mutableStateOf(Color(0xFFBB86FC)) // d4 color
-var D6Color by mutableStateOf(Color(0xFF80B3FF)) // d6 color
-var D8Color by mutableStateOf(Color(0xFF81C784)) // d8 color
-var D10Color by mutableStateOf(Color(0xFFFFD54F)) // d10 color
-var D12Color by mutableStateOf(Color(0xFF4DD0E1)) // d12 color
-var D20Color by mutableStateOf(Color(0xFFD0BCFF)) // d20 color
-var D100Color by mutableStateOf(Color(0xFFF48FB1)) // d100 color
+var AdvantageColor by mutableStateOf(Color(0xFF4527A0)) // Advantage Roll Button
+var DisadvantageColor by mutableStateOf(Color(0xFFD81B60)) // Disadvantage Roll Button
+var DiceRollResultColor by mutableStateOf(Color(0xFF7E57C2)) // Dice Roll Result Color
+var DiceRollAnimationColor by mutableStateOf(Color(0xFF7E57C2)) // Dice Roll Animation Color
+var D4Color by mutableStateOf(Color(0xFFFFFFFF)) // d4 color
+var D6Color by mutableStateOf(Color(0xFFFFFFFF)) // d6 color
+var D8Color by mutableStateOf(Color(0xFFFFFFFF)) // d8 color
+var D10Color by mutableStateOf(Color(0xFFFFFFFF)) // d10 color
+var D12Color by mutableStateOf(Color(0xFFFFFFFF)) // d12 color
+var D20Color by mutableStateOf(Color(0xFFFFFFFF)) // d20 color
+var D100Color by mutableStateOf(Color(0xFFFFFFFF)) // d100 color
 var DiceTrayGradientStart by mutableStateOf(Color(0xFF2B2930)) // Dice Tray Gradient Start
-var DiceTrayGradientEnd by mutableStateOf(Color(0xFF1D1B20)) // Dice Tray Gradient End
-var ActiveRollBackgroundColor by mutableStateOf(Color(0xFFD0BCFF))
+var DiceTrayGradientEnd by mutableStateOf(Color(0xFF1C1B1F)) // Dice Tray Gradient End
+var ActiveRollBackgroundColor by mutableStateOf(Color(0xFF7E57C2))
 var ActiveRollContentColor by mutableStateOf(Color(0xFF1C1B1F)) // Active Roll Gradient Start
 
 enum class UiStyleTheme {
@@ -85,7 +85,27 @@ enum class UiStyleTheme {
     SOFT_ORGANIC
 }
 
-var currentUiStyle by mutableStateOf(UiStyleTheme.CLASSIC_ROUNDED)
+var currentUiStyle by mutableStateOf(UiStyleTheme.GLASSMORPHIC)
+
+enum class ButtonStyleTheme {
+    PILL,
+    ROUNDED,
+    SHARP,
+    CUT_CORNER
+}
+
+var currentButtonStyle by mutableStateOf(ButtonStyleTheme.PILL)
+
+@Composable
+fun getButtonShape(defaultRadius: androidx.compose.ui.unit.Dp = 12.dp): androidx.compose.foundation.shape.CornerBasedShape {
+    return when (currentButtonStyle) {
+        ButtonStyleTheme.PILL -> androidx.compose.foundation.shape.RoundedCornerShape(50)
+        ButtonStyleTheme.ROUNDED -> androidx.compose.foundation.shape.RoundedCornerShape(defaultRadius)
+        ButtonStyleTheme.SHARP -> androidx.compose.foundation.shape.RoundedCornerShape(0.dp)
+        ButtonStyleTheme.CUT_CORNER -> androidx.compose.foundation.shape.CutCornerShape(defaultRadius)
+    }
+}
+
 
 @Composable
 fun getCardModifier(shape: androidx.compose.ui.graphics.Shape, elevation: androidx.compose.ui.unit.Dp = 2.dp): Modifier {
@@ -557,7 +577,7 @@ fun ActiveRollingTray(
                                     colors = CardDefaults.cardColors(
                                         containerColor = if (rollType == "ADVANTAGE") AdvantageColor else DisadvantageColor
                                     ),
-                                    shape = RoundedCornerShape(6.dp),
+                                    shape = getButtonShape(),
                                     modifier = Modifier.padding(2.dp)
                                 ) {
                                     Text(
@@ -662,6 +682,8 @@ fun ActiveRollingTray(
             }
         }
     }
+
+
 }
 
 @Composable
@@ -694,6 +716,8 @@ fun LazyRowScrollableContainer(results: List<Pair<Int, Int>>) {
             }
         }
     }
+
+
 }
 
 @Composable
@@ -840,7 +864,7 @@ fun DiceSetsTab(
                                         containerColor = AdvantageColor,
                                         contentColor = Color.White
                                     ),
-                                    shape = RoundedCornerShape(8.dp),
+                                    shape = getButtonShape(),
                                     modifier = Modifier
                                         .weight(1f)
                                         .height(36.dp)
@@ -857,7 +881,7 @@ fun DiceSetsTab(
                                     containerColor = GoldAccent,
                                     contentColor = Color.White
                                 ),
-                                shape = RoundedCornerShape(8.dp),
+                                    shape = getButtonShape(),
                                 modifier = Modifier
                                     .weight(1.5f)
                                     .height(36.dp)
@@ -880,7 +904,7 @@ fun DiceSetsTab(
                                         containerColor = DisadvantageColor,
                                         contentColor = Color.White
                                     ),
-                                    shape = RoundedCornerShape(8.dp),
+                                    shape = getButtonShape(),
                                     modifier = Modifier
                                         .weight(1f)
                                         .height(36.dp)
@@ -896,6 +920,8 @@ fun DiceSetsTab(
             }
         }
     }
+
+
 }
 
 @Composable
@@ -1069,7 +1095,7 @@ fun QuickRollerTab(
                         Button(
                             onClick = { if (modifierValue > -20) modifierValue-- },
                             colors = ButtonDefaults.buttonColors(containerColor = DarkSlateBg),
-                            shape = RoundedCornerShape(8.dp)
+                            shape = getButtonShape()
                         ) {
                             Text("-", fontSize = 18.sp, fontWeight = FontWeight.Bold)
                         }
@@ -1085,7 +1111,7 @@ fun QuickRollerTab(
                         Button(
                             onClick = { if (modifierValue < 20) modifierValue++ },
                             colors = ButtonDefaults.buttonColors(containerColor = DarkSlateBg),
-                            shape = RoundedCornerShape(8.dp)
+                            shape = getButtonShape()
                         ) {
                             Text("+", fontSize = 18.sp, fontWeight = FontWeight.Bold)
                         }
@@ -1132,7 +1158,7 @@ fun QuickRollerTab(
                                         containerColor = if (isChosen) chosenColor else DarkSlateBg,
                                         contentColor = if (isChosen) Color.White else TextSecondary
                                     ),
-                                    shape = RoundedCornerShape(8.dp),
+                                    shape = getButtonShape(),
                                     modifier = Modifier.weight(1f)
                                 ) {
                                     Text(
@@ -1171,7 +1197,7 @@ fun QuickRollerTab(
                     },
                     border = BorderStroke(1.dp, Color(0xFF32323C)),
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = CrimsonAccent),
-                    shape = RoundedCornerShape(12.dp),
+                    shape = getButtonShape(),
                     modifier = Modifier.height(48.dp),
                     enabled = hasSelectedDice || modifierValue != 0
                 ) {
@@ -1180,6 +1206,7 @@ fun QuickRollerTab(
 
                 // Roll Button
                 Button(
+                    shape = getButtonShape(),
                     onClick = {
                         onRoll(
                             "Quick Tray Roll",
@@ -1195,7 +1222,6 @@ fun QuickRollerTab(
                         )
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = GoldAccent, contentColor = Color.White),
-                    shape = RoundedCornerShape(12.dp),
                     modifier = Modifier
                         .weight(1f)
                         .height(48.dp)
@@ -1209,6 +1235,8 @@ fun QuickRollerTab(
             }
         }
     }
+
+
 }
 
 @Composable
@@ -1232,7 +1260,9 @@ fun RollHistoryTab(
                 letterSpacing = 1.2.sp
             )
             if (rollLogs.isNotEmpty()) {
-                TextButton(onClick = { showConfirmClear = true }) {
+                TextButton(onClick = { showConfirmClear = true },
+                                    shape = getButtonShape()
+                                ) {
                     Icon(imageVector = Icons.Default.Delete, contentDescription = null, modifier = Modifier.size(16.dp), tint = CrimsonAccent)
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(text = "Clear Logs", color = CrimsonAccent, fontSize = 12.sp, fontWeight = FontWeight.Bold)
@@ -1366,12 +1396,16 @@ fun RollHistoryTab(
             text = { Text("This will permanently delete all historic roll logs from the database.", color = TextSecondary) },
             containerColor = DarkCardBg,
             dismissButton = {
-                TextButton(onClick = { showConfirmClear = false }) {
+                TextButton(onClick = { showConfirmClear = false },
+                                    shape = getButtonShape()
+                                ) {
                     Text("Cancel", color = TextSecondary)
                 }
             },
             confirmButton = {
-                TextButton(onClick = {
+                TextButton(
+                    shape = getButtonShape(),
+                    onClick = {
                     onClearHistory()
                     showConfirmClear = false
                 }) {
@@ -1562,7 +1596,7 @@ fun DiceSetDialog(
                         Button(
                             onClick = { if (modifier > -20) modifier-- },
                             colors = ButtonDefaults.buttonColors(containerColor = DarkCardBg),
-                            shape = RoundedCornerShape(6.dp),
+                            shape = getButtonShape(),
                             contentPadding = PaddingValues(0.dp),
                             modifier = Modifier.size(36.dp)
                         ) {
@@ -1580,7 +1614,7 @@ fun DiceSetDialog(
                         Button(
                             onClick = { if (modifier < 20) modifier++ },
                             colors = ButtonDefaults.buttonColors(containerColor = DarkCardBg),
-                            shape = RoundedCornerShape(6.dp),
+                            shape = getButtonShape(),
                             contentPadding = PaddingValues(0.dp),
                             modifier = Modifier.size(36.dp)
                         ) {
@@ -1640,13 +1674,14 @@ fun DiceSetDialog(
                             onClick = onDismiss,
                             border = BorderStroke(1.dp, Color(0xFF3C3C46)),
                             colors = ButtonDefaults.outlinedButtonColors(contentColor = TextPrimary),
-                            shape = RoundedCornerShape(10.dp),
+                            shape = getButtonShape(),
                             modifier = Modifier.weight(1f)
                         ) {
                             Text("Cancel")
                         }
 
                         Button(
+                            shape = getButtonShape(),
                             onClick = {
                                 if (name.isNotEmpty()) {
                                     val saved = DiceSet(
@@ -1668,7 +1703,6 @@ fun DiceSetDialog(
                                 }
                             },
                             colors = ButtonDefaults.buttonColors(containerColor = GoldAccent, contentColor = Color.White),
-                            shape = RoundedCornerShape(10.dp),
                             modifier = Modifier
                                 .weight(1.5f)
                                 .testTag("save_set_button"),
@@ -1681,6 +1715,8 @@ fun DiceSetDialog(
             }
         }
     }
+
+
 }
 
 // Helper Class definitions for counters
@@ -1931,6 +1967,8 @@ fun DiceShape(sides: Int, value: Int, color: Color, modifier: Modifier = Modifie
             }
         }
     }
+
+
 }
 
 private fun hsvToColor(hue: Float, saturation: Float, value: Float): Color {
@@ -2182,8 +2220,28 @@ private data class ThemePreset(
     val secondaryAccent: Color,
     val errorAccent: Color,
     val textPrimary: Color,
-    val textSecondary: Color
+    val textSecondary: Color,
+    val diceColor: Color = accent,
+    val uiStyle: UiStyleTheme = UiStyleTheme.CLASSIC_ROUNDED,
+    val buttonStyle: ButtonStyleTheme = ButtonStyleTheme.PILL,
+    val advantageColor: Color = secondaryAccent,
+    val disadvantageColor: Color = errorAccent,
+    val diceRollResultColor: Color = diceColor,
+    val diceRollAnimationColor: Color = diceColor,
+    val d4Color: Color = diceColor,
+    val d6Color: Color = diceColor,
+    val d8Color: Color = diceColor,
+    val d10Color: Color = diceColor,
+    val d12Color: Color = diceColor,
+    val d20Color: Color = diceColor,
+    val d100Color: Color = diceColor,
+    val diceTrayGradientStart: Color = cardBg,
+    val diceTrayGradientEnd: Color = bg,
+    val activeRollBackgroundColor: Color = diceColor,
+    val activeRollContentColor: Color = bg
 )
+
+private val customThemePresets = mutableStateListOf<ThemePreset>()
 
 @Composable
 fun SettingsDialog(
@@ -2199,7 +2257,7 @@ fun SettingsDialog(
 ) {
     val presets = listOf(
         ThemePreset(
-            name = "Stark Monochrome",
+            name = "Pen and Paper",
             description = "High contrast ink & white",
             bg = Color(0xFFFFFFFF),
             cardBg = Color(0xFFF3F4F6),
@@ -2208,139 +2266,41 @@ fun SettingsDialog(
             secondaryAccent = Color(0xFF4B5563),
             errorAccent = Color(0xFFDC2626),
             textPrimary = Color(0xFF111827),
-            textSecondary = Color(0xFF4B5563)
+            textSecondary = Color(0xFF4B5563),
+            uiStyle = UiStyleTheme.FLAT_MINIMAL,
+            buttonStyle = ButtonStyleTheme.SHARP
         ),
         ThemePreset(
             name = "Obsidian Violet",
             description = "Muted cosmic dark",
             bg = Color(0xFF1C1B1F),
             cardBg = Color(0xFF2B2930),
-            accent = Color(0xFFD0BCFF),
-            darkAccent = Color(0xFF4F378B),
-            secondaryAccent = Color(0xFFE8DEF8),
-            errorAccent = Color(0xFFF2B8B5),
+            accent = Color(0xFF7E57C2),
+            darkAccent = Color(0xFF311B92),
+            secondaryAccent = Color(0xFF4527A0),
+            errorAccent = Color(0xFFD81B60),
             textPrimary = Color(0xFFE6E1E5),
-            textSecondary = Color(0xFFCAC4D0)
+            textSecondary = Color(0xFFCAC4D0),
+            diceColor = Color(0xFFFFFFFF),
+            diceRollResultColor = Color(0xFF7E57C2),
+            diceRollAnimationColor = Color(0xFF7E57C2),
+            activeRollBackgroundColor = Color(0xFF7E57C2),
+            uiStyle = UiStyleTheme.GLASSMORPHIC,
+            buttonStyle = ButtonStyleTheme.PILL
         ),
         ThemePreset(
-            name = "Gilded Amber",
-            description = "Classic RPG gold",
-            bg = Color(0xFF121214),
-            cardBg = Color(0xFF1E1E22),
-            accent = Color(0xFFFFB300),
-            darkAccent = Color(0xFFC59B27),
-            secondaryAccent = Color(0xFFFFD54F),
+            name = "Metal",
+            description = "Metal greyscale",
+            bg = Color(0xFF141414),
+            cardBg = Color(0xFF262626),
+            accent = Color(0xFFB0B0B0),
+            darkAccent = Color(0xFF424242),
+            secondaryAccent = Color(0xFF757575),
             errorAccent = Color(0xFFD32F2F),
-            textPrimary = Color(0xFFF5F5F7),
-            textSecondary = Color(0xFF9E9E9E)
-        ),
-        ThemePreset(
-            name = "Emerald Grove",
-            description = "Nature druid green",
-            bg = Color(0xFF0B140D),
-            cardBg = Color(0xFF152619),
-            accent = Color(0xFF81C784),
-            darkAccent = Color(0xFF2E7D32),
-            secondaryAccent = Color(0xFFC8E6C9),
-            errorAccent = Color(0xFFE57373),
-            textPrimary = Color(0xFFE8F5E9),
-            textSecondary = Color(0xFFA5D6A7)
-        ),
-        ThemePreset(
-            name = "Mage Cyan",
-            description = "Glowing mana theme",
-            bg = Color(0xFF0A1118),
-            cardBg = Color(0xFF121F2B),
-            accent = Color(0xFF4DD0E1),
-            darkAccent = Color(0xFF00838F),
-            secondaryAccent = Color(0xFFB2EBF2),
-            errorAccent = Color(0xFFFF8A80),
-            textPrimary = Color(0xFFE0F7FA),
-            textSecondary = Color(0xFF80DEEA)
-        ),
-        ThemePreset(
-            name = "Crimson Keep",
-            description = "Warlord combat red",
-            bg = Color(0xFF1A0A0A),
-            cardBg = Color(0xFF2D1212),
-            accent = Color(0xFFFF8A80),
-            darkAccent = Color(0xFFC62828),
-            secondaryAccent = Color(0xFFFFCDD2),
-            errorAccent = Color(0xFFEF5350),
-            textPrimary = Color(0xFFFFEBEE),
-            textSecondary = Color(0xFFEF9A9A)
-        ),
-        ThemePreset(
-            name = "Cyberpunk Neon",
-            description = "Vaporwave synth-wave",
-            bg = Color(0xFF0D021A),
-            cardBg = Color(0xFF1F0B3D),
-            accent = Color(0xFFFF007F),
-            darkAccent = Color(0xFF7B009A),
-            secondaryAccent = Color(0xFF00F0FF),
-            errorAccent = Color(0xFFFF0055),
-            textPrimary = Color(0xFFFDF6FF),
-            textSecondary = Color(0xFFB9A2D8)
-        ),
-        ThemePreset(
-            name = "Solar Flare",
-            description = "Vibrant starburst",
-            bg = Color(0xFF1A1105),
-            cardBg = Color(0xFF2E1C0A),
-            accent = Color(0xFFFF6F00),
-            darkAccent = Color(0xFFD84315),
-            secondaryAccent = Color(0xFFFFB74D),
-            errorAccent = Color(0xFFFF5252),
-            textPrimary = Color(0xFFFFF3E0),
-            textSecondary = Color(0xFFFFCC80)
-        ),
-        ThemePreset(
-            name = "Royal Sapphire",
-            description = "Paladin cosmic crest",
-            bg = Color(0xFF0A122C),
-            cardBg = Color(0xFF15224F),
-            accent = Color(0xFF3F51B5),
-            darkAccent = Color(0xFF1A237E),
-            secondaryAccent = Color(0xFFFFD700),
-            errorAccent = Color(0xFFFF1744),
-            textPrimary = Color(0xFFE8EAF6),
-            textSecondary = Color(0xFF9FA8DA)
-        ),
-        ThemePreset(
-            name = "Forest Ranger",
-            description = "Wild autumn wood",
-            bg = Color(0xFF1B2E1A),
-            cardBg = Color(0xFF2C452A),
-            accent = Color(0xFFD4A373),
-            darkAccent = Color(0xFFA27B5C),
-            secondaryAccent = Color(0xFFE9EDC6),
-            errorAccent = Color(0xFFE07A5F),
-            textPrimary = Color(0xFFF4F1DE),
-            textSecondary = Color(0xFFE0E0E0)
-        ),
-        ThemePreset(
-            name = "Sunset Rose",
-            description = "Twilight serenity",
-            bg = Color(0xFF24141E),
-            cardBg = Color(0xFF3B1E2F),
-            accent = Color(0xFFFF7096),
-            darkAccent = Color(0xFF8F2D56),
-            secondaryAccent = Color(0xFFFFB5A7),
-            errorAccent = Color(0xFFE05780),
-            textPrimary = Color(0xFFFFF0F5),
-            textSecondary = Color(0xFFF3C6D3)
-        ),
-        ThemePreset(
-            name = "Frostbite d20",
-            description = "Tundra north wind",
-            bg = Color(0xFFF0F4F8),
-            cardBg = Color(0xFFD9E2EC),
-            accent = Color(0xFF102A43),
-            darkAccent = Color(0xFF334E68),
-            secondaryAccent = Color(0xFF486581),
-            errorAccent = Color(0xFFD32F2F),
-            textPrimary = Color(0xFF102A43),
-            textSecondary = Color(0xFF486581)
+            textPrimary = Color(0xFFF5F5F5),
+            textSecondary = Color(0xFF9E9E9E),
+            uiStyle = UiStyleTheme.OBSIDIAN_SHARD,
+            buttonStyle = ButtonStyleTheme.CUT_CORNER
         )
     )
 
@@ -2354,7 +2314,7 @@ fun SettingsDialog(
         Color(0xFF1A0A0A) to "Blood Crimson",
         Color(0xFF2B2930) to "Slate Graphite",
         Color(0xFF1E1E22) to "Dungeon Grey",
-        Color(0xFFD0BCFF) to "Pastel Violet",
+        Color(0xFF7E57C2) to "Deep Violet",
         Color(0xFFFFB300) to "Gold Ore",
         Color(0xFF81C784) to "Elf Green",
         Color(0xFF4DD0E1) to "Mana Cyan",
@@ -2363,7 +2323,7 @@ fun SettingsDialog(
         Color(0xFFE8DEF8) to "Lavender Mist",
         Color(0xFFCAC4D0) to "Silver Shield",
         Color(0xFFE6E1E5) to "Ivory Silk",
-        Color(0xFF4F378B) to "Royal Purple",
+        Color(0xFF311B92) to "Royal Purple",
         Color(0xFFC59B27) to "Burnished Bronze",
         Color(0xFF2E7D32) to "Earth Green",
         Color(0xFF00838F) to "Deep Ocean",
@@ -2376,6 +2336,8 @@ fun SettingsDialog(
 
     var expandedElementIndex by remember { mutableStateOf<Int?>(null) }
     var selectedTabIndex by remember { mutableStateOf(0) } // 0: Presets, 1: Custom colors, 2: Preferences
+    var showSavePresetDialog by remember { mutableStateOf(false) }
+    var newPresetName by remember { mutableStateOf("") }
 
     Dialog(onDismissRequest = onDismiss) {
         val settingsShape = getCardShape(24.dp)
@@ -2494,7 +2456,8 @@ fun SettingsDialog(
                                 )
                             }
 
-                            items(presets) { preset ->
+                            items(presets + customThemePresets) { preset ->
+                                val isCustom = customThemePresets.contains(preset)
                                 val isSelected = DarkSlateBg == preset.bg && GoldAccent == preset.accent
                                 Card(
                                     modifier = Modifier
@@ -2508,21 +2471,23 @@ fun SettingsDialog(
                                             CrimsonAccent = preset.errorAccent
                                             TextPrimary = preset.textPrimary
                                             TextSecondary = preset.textSecondary
-                                            DiceTrayGradientStart = preset.cardBg
-                                            DiceTrayGradientEnd = preset.bg
-                                            AdvantageColor = preset.secondaryAccent
-                                            DisadvantageColor = preset.errorAccent
-                                            DiceRollResultColor = preset.accent
-                                            DiceRollAnimationColor = preset.accent
-                                            D4Color = preset.accent
-                                            D6Color = preset.accent
-                                            D8Color = preset.accent
-                                            D10Color = preset.accent
-                                            D12Color = preset.accent
-                                            D20Color = preset.accent
-                                            D100Color = preset.accent
-                                            ActiveRollBackgroundColor = preset.accent
-                                            ActiveRollContentColor = preset.bg
+                                            DiceTrayGradientStart = preset.diceTrayGradientStart
+                                            DiceTrayGradientEnd = preset.diceTrayGradientEnd
+                                            AdvantageColor = preset.advantageColor
+                                            DisadvantageColor = preset.disadvantageColor
+                                            DiceRollResultColor = preset.diceRollResultColor
+                                            DiceRollAnimationColor = preset.diceRollAnimationColor
+                                            D4Color = preset.d4Color
+                                            D6Color = preset.d6Color
+                                            D8Color = preset.d8Color
+                                            D10Color = preset.d10Color
+                                            D12Color = preset.d12Color
+                                            D20Color = preset.d20Color
+                                            D100Color = preset.d100Color
+                                            ActiveRollBackgroundColor = preset.activeRollBackgroundColor
+                                            ActiveRollContentColor = preset.activeRollContentColor
+                                            currentUiStyle = preset.uiStyle
+                                            currentButtonStyle = preset.buttonStyle
                                         }
                                         .border(
                                             width = if (isSelected) 2.dp else 1.dp,
@@ -2581,8 +2546,28 @@ fun SettingsDialog(
                                             Box(modifier = Modifier.size(16.dp).background(preset.bg, CircleShape).border(0.5.dp, Color.White, CircleShape))
                                             Box(modifier = Modifier.size(16.dp).background(preset.cardBg, CircleShape).border(0.5.dp, Color.White, CircleShape))
                                             Box(modifier = Modifier.size(16.dp).background(preset.accent, CircleShape).border(0.5.dp, Color.White, CircleShape))
+                                            if (isCustom) {
+                                                Spacer(modifier = Modifier.width(8.dp))
+                                                IconButton(onClick = { customThemePresets.remove(preset) }, modifier = Modifier.size(24.dp)) {
+                                                    Icon(Icons.Default.Delete, contentDescription = "Delete", tint = preset.errorAccent, modifier = Modifier.size(16.dp))
+                                                }
+                                            }
                                         }
                                     }
+                                }
+                            }
+                            item {
+                                Spacer(modifier = Modifier.height(10.dp))
+                                OutlinedButton(
+                                    onClick = { showSavePresetDialog = true },
+                                    modifier = Modifier.fillMaxWidth().height(48.dp),
+                                    shape = getButtonShape(),
+                                    border = BorderStroke(1.dp, GoldAccent),
+                                    colors = ButtonDefaults.outlinedButtonColors(contentColor = GoldAccent)
+                                ) {
+                                    Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(16.dp))
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text("Save Current Style as Custom Preset", fontWeight = FontWeight.Bold, fontSize = 12.sp)
                                 }
                             }
                         }
@@ -2779,6 +2764,89 @@ fun SettingsDialog(
                                                 RadioButton(
                                                     selected = isSelected,
                                                     onClick = { currentUiStyle = style },
+                                                    colors = RadioButtonDefaults.colors(
+                                                        selectedColor = GoldAccent,
+                                                        unselectedColor = TextSecondary
+                                                    )
+                                                )
+                                                Spacer(modifier = Modifier.width(8.dp))
+                                                Column {
+                                                    Text(
+                                                        text = name,
+                                                        color = TextPrimary,
+                                                        fontSize = 13.sp,
+                                                        fontWeight = FontWeight.Bold
+                                                    )
+                                                    Text(
+                                                        text = desc,
+                                                        color = TextSecondary,
+                                                        fontSize = 10.sp
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            item {
+                                Spacer(modifier = Modifier.height(10.dp))
+                                HorizontalDivider(color = Color(0xFF49454F).copy(alpha = 0.3f))
+                                Spacer(modifier = Modifier.height(10.dp))
+                            }
+
+                            item {
+                                Text(
+                                    text = "BUTTON STYLE AESTHETIC",
+                                    color = GoldAccent,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    letterSpacing = 1.sp
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Choose the shape and curvature of all action buttons:",
+                                    color = TextSecondary,
+                                    fontSize = 11.sp
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                            }
+                            
+                            item {
+                                val buttonStyles = listOf(
+                                    Triple(ButtonStyleTheme.PILL, "Pill Shaped", "Fully rounded soft edges"),
+                                    Triple(ButtonStyleTheme.ROUNDED, "Rounded Corner", "Standard subtle rounded corners"),
+                                    Triple(ButtonStyleTheme.SHARP, "Sharp Rectangle", "Hard 90-degree corners"),
+                                    Triple(ButtonStyleTheme.CUT_CORNER, "Cut Corners", "Sci-fi chamfered edges")
+                                )
+
+                                Column(
+                                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    buttonStyles.forEach { (style, name, desc) ->
+                                        val isSelected = currentButtonStyle == style
+                                        val cardShape = RoundedCornerShape(12.dp)
+                                        Card(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .clickable { currentButtonStyle = style }
+                                                .border(
+                                                    width = if (isSelected) 1.5.dp else 0.5.dp,
+                                                    color = if (isSelected) GoldAccent else Color(0xFF49454F).copy(alpha = 0.3f),
+                                                    shape = cardShape
+                                                ),
+                                            colors = CardDefaults.cardColors(
+                                                containerColor = if (isSelected) DarkSlateBg.copy(alpha = 0.6f) else DarkSlateBg.copy(alpha = 0.2f)
+                                            ),
+                                            shape = cardShape
+                                        ) {
+                                            Row(
+                                                modifier = Modifier.padding(12.dp),
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                RadioButton(
+                                                    selected = isSelected,
+                                                    onClick = { currentButtonStyle = style },
                                                     colors = RadioButtonDefaults.colors(
                                                         selectedColor = GoldAccent,
                                                         unselectedColor = TextSecondary
@@ -3028,6 +3096,7 @@ fun SettingsDialog(
 
                 Button(
                     onClick = onDismiss,
+                    shape = getButtonShape(),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(48.dp),
@@ -3035,11 +3104,89 @@ fun SettingsDialog(
                         containerColor = GoldAccent,
                         contentColor = Color.White
                     ),
-                    shape = RoundedCornerShape(12.dp)
                 ) {
                     Text(text = "Close Settings", fontWeight = FontWeight.Bold, fontSize = 14.sp)
                 }
             }
         }
+    }
+
+
+
+    if (showSavePresetDialog) {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { showSavePresetDialog = false },
+            title = { Text("Save Custom Preset", color = TextPrimary) },
+            text = {
+                Column {
+                    Text("Enter a name for your custom preset style:", color = TextSecondary, fontSize = 14.sp)
+                    Spacer(modifier = Modifier.height(10.dp))
+                    OutlinedTextField(
+                        value = newPresetName,
+                        onValueChange = { newPresetName = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedTextColor = TextPrimary,
+                            unfocusedTextColor = TextPrimary,
+                            focusedBorderColor = GoldAccent,
+                            unfocusedBorderColor = Color(0xFF49454F).copy(alpha = 0.5f)
+                        ),
+                        placeholder = { Text("My Custom Style", color = TextSecondary.copy(alpha = 0.5f)) }
+                    )
+                }
+            },
+            containerColor = DarkCardBg,
+            dismissButton = {
+                TextButton(onClick = { showSavePresetDialog = false }, shape = getButtonShape()) {
+                    Text("Cancel", color = TextSecondary)
+                }
+            },
+            confirmButton = {
+                Button(
+                    shape = getButtonShape(),
+                    colors = ButtonDefaults.buttonColors(containerColor = GoldAccent, contentColor = Color.White),
+                    enabled = newPresetName.isNotBlank(),
+                    onClick = {
+                        customThemePresets.add(
+                            ThemePreset(
+                                name = newPresetName,
+                                description = "Custom User Style",
+                                bg = DarkSlateBg,
+                                cardBg = DarkCardBg,
+                                accent = GoldAccent,
+                                darkAccent = DarkGoldAccent,
+                                secondaryAccent = AmberGlow,
+                                errorAccent = CrimsonAccent,
+                                textPrimary = TextPrimary,
+                                textSecondary = TextSecondary,
+                                diceColor = DiceRollResultColor,
+                                uiStyle = currentUiStyle,
+                                buttonStyle = currentButtonStyle,
+                                advantageColor = AdvantageColor,
+                                disadvantageColor = DisadvantageColor,
+                                diceRollResultColor = DiceRollResultColor,
+                                diceRollAnimationColor = DiceRollAnimationColor,
+                                d4Color = D4Color,
+                                d6Color = D6Color,
+                                d8Color = D8Color,
+                                d10Color = D10Color,
+                                d12Color = D12Color,
+                                d20Color = D20Color,
+                                d100Color = D100Color,
+                                diceTrayGradientStart = DiceTrayGradientStart,
+                                diceTrayGradientEnd = DiceTrayGradientEnd,
+                                activeRollBackgroundColor = ActiveRollBackgroundColor,
+                                activeRollContentColor = ActiveRollContentColor
+                            )
+                        )
+                        newPresetName = ""
+                        showSavePresetDialog = false
+                    }
+                ) {
+                    Text("Save", fontWeight = FontWeight.Bold)
+                }
+            }
+        )
     }
 }

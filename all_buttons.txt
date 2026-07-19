@@ -1,0 +1,160 @@
+798:                                IconButton(
+799-                                    onClick = { expandedMenu = true },
+800-                                    modifier = Modifier.size(36.dp)
+801-                                ) {
+802-                                    Icon(
+803-                                        imageVector = Icons.Default.MoreVert,
+--
+857:                                Button(
+858-                                    onClick = { onRoll(set, "ADVANTAGE") },
+859-                                    colors = ButtonDefaults.buttonColors(
+860-                                        containerColor = AdvantageColor,
+861-                                        contentColor = Color.White
+862-                                    ),
+--
+874:                            Button(
+875-                                onClick = { onRoll(set, "NORMAL") },
+876-                                colors = ButtonDefaults.buttonColors(
+877-                                    containerColor = GoldAccent,
+878-                                    contentColor = Color.White
+879-                                ),
+--
+897:                                Button(
+898-                                    onClick = { onRoll(set, "DISADVANTAGE") },
+899-                                    colors = ButtonDefaults.buttonColors(
+900-                                        containerColor = DisadvantageColor,
+901-                                        contentColor = Color.White
+902-                                    ),
+--
+1034:                                        IconButton(onClick = dec, modifier = Modifier.size(24.dp)) {
+1035-                                            Icon(
+1036-                                                imageVector = Icons.Default.Remove,
+1037-                                                contentDescription = "Decrease d$sides",
+1038-                                                tint = if (count > 0) TextPrimary else TextSecondary.copy(alpha = 0.3f),
+1039-                                                modifier = Modifier.size(14.dp)
+--
+1043:                                        IconButton(onClick = inc, modifier = Modifier.size(24.dp)) {
+1044-                                            Icon(
+1045-                                                imageVector = Icons.Default.Add,
+1046-                                                contentDescription = "Increase d$sides",
+1047-                                                tint = TextPrimary,
+1048-                                                modifier = Modifier.size(14.dp)
+--
+1089:                        Button(
+1090-                            onClick = { if (modifierValue > -20) modifierValue-- },
+1091-                            colors = ButtonDefaults.buttonColors(containerColor = DarkSlateBg),
+1092-                            shape = getButtonShape()
+1093-                        ) {
+1094-                            Text("-", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+--
+1105:                        Button(
+1106-                            onClick = { if (modifierValue < 20) modifierValue++ },
+1107-                            colors = ButtonDefaults.buttonColors(containerColor = DarkSlateBg),
+1108-                            shape = getButtonShape()
+1109-                        ) {
+1110-                            Text("+", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+--
+1149:                                Button(
+1150-                                    onClick = { selectedRollType = opt },
+1151-                                    colors = ButtonDefaults.buttonColors(
+1152-                                        containerColor = if (isChosen) chosenColor else DarkSlateBg,
+1153-                                        contentColor = if (isChosen) Color.White else TextSecondary
+1154-                                    ),
+--
+1180:                OutlinedButton(
+1181-                    onClick = {
+1182-                        d4Count = 0
+1183-                        d6Count = 0
+1184-                        d8Count = 0
+1185-                        d10Count = 0
+--
+1202:                Button(
+1203-                    shape = getButtonShape(),
+1204-                    onClick = {
+1205-                        onRoll(
+1206-                            "Quick Tray Roll",
+1207-                            d4Count,
+--
+1255:                TextButton(onClick = { showConfirmClear = true },
+1256-                                    shape = getButtonShape()
+1257-                                ) {
+1258-                    Icon(imageVector = Icons.Default.Delete, contentDescription = null, modifier = Modifier.size(16.dp), tint = CrimsonAccent)
+1259-                    Spacer(modifier = Modifier.width(4.dp))
+1260-                    Text(text = "Clear Logs", color = CrimsonAccent, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+--
+1391:                TextButton(onClick = { showConfirmClear = false },
+1392-                                    shape = getButtonShape()
+1393-                                ) {
+1394-                    Text("Cancel", color = TextSecondary)
+1395-                }
+1396-            },
+--
+1398:                TextButton(
+1399-                    shape = getButtonShape(),
+1400-                    onClick = {
+1401-                    onClearHistory()
+1402-                    showConfirmClear = false
+1403-                }) {
+--
+1546:                                            IconButton(onClick = data.dec, modifier = Modifier.size(24.dp)) {
+1547-                                                Icon(Icons.Default.Remove, contentDescription = null, tint = TextPrimary, modifier = Modifier.size(12.dp))
+1548-                                            }
+1549-                                            Text(
+1550-                                                text = data.count.toString(),
+1551-                                                color = if (data.count > 0) GoldAccent else TextPrimary,
+--
+1556:                                            IconButton(onClick = data.inc, modifier = Modifier.size(24.dp)) {
+1557-                                                Icon(Icons.Default.Add, contentDescription = null, tint = TextPrimary, modifier = Modifier.size(12.dp))
+1558-                                            }
+1559-                                        }
+1560-                                    }
+1561-                                }
+--
+1588:                        Button(
+1589-                            onClick = { if (modifier > -20) modifier-- },
+1590-                            colors = ButtonDefaults.buttonColors(containerColor = DarkCardBg),
+1591-                            shape = getButtonShape(),
+1592-                            contentPadding = PaddingValues(0.dp),
+1593-                            modifier = Modifier.size(36.dp)
+--
+1606:                        Button(
+1607-                            onClick = { if (modifier < 20) modifier++ },
+1608-                            colors = ButtonDefaults.buttonColors(containerColor = DarkCardBg),
+1609-                            shape = getButtonShape(),
+1610-                            contentPadding = PaddingValues(0.dp),
+1611-                            modifier = Modifier.size(36.dp)
+--
+1665:                        OutlinedButton(
+1666-                            onClick = onDismiss,
+1667-                            border = BorderStroke(1.dp, Color(0xFF3C3C46)),
+1668-                            colors = ButtonDefaults.outlinedButtonColors(contentColor = TextPrimary),
+1669-                            shape = RoundedCornerShape(10.dp),
+1670-                            modifier = Modifier.weight(1f)
+--
+1675:                        Button(
+1676-                            shape = getButtonShape(),
+1677-                            onClick = {
+1678-                                if (name.isNotEmpty()) {
+1679-                                    val saved = DiceSet(
+1680-                                        id = diceSet?.id ?: 0,
+--
+2706:                                                RadioButton(
+2707-                                                    selected = isSelected,
+2708-                                                    onClick = { currentUiStyle = style },
+2709-                                                    colors = RadioButtonDefaults.colors(
+2710-                                                        selectedColor = GoldAccent,
+2711-                                                        unselectedColor = TextSecondary
+--
+2789:                                                RadioButton(
+2790-                                                    selected = isSelected,
+2791-                                                    onClick = { currentButtonStyle = style },
+2792-                                                    colors = RadioButtonDefaults.colors(
+2793-                                                        selectedColor = GoldAccent,
+2794-                                                        unselectedColor = TextSecondary
+--
+3039:                Button(
+3040-                    onClick = onDismiss,
+3041-                    shape = getButtonShape(),
+3042-                    modifier = Modifier
+3043-                        .fillMaxWidth()
+3044-                        .height(48.dp),

@@ -1,0 +1,23 @@
+798:                                IconButton(
+857:                                Button(
+874:                            Button(
+897:                                Button(
+1034:                                        IconButton(onClick = dec, modifier = Modifier.size(24.dp)) {
+1043:                                        IconButton(onClick = inc, modifier = Modifier.size(24.dp)) {
+1089:                        Button(
+1105:                        Button(
+1149:                                Button(
+1180:                OutlinedButton(
+1202:                Button(
+1255:                TextButton(onClick = { showConfirmClear = true },
+1391:                TextButton(onClick = { showConfirmClear = false },
+1398:                TextButton(
+1546:                                            IconButton(onClick = data.dec, modifier = Modifier.size(24.dp)) {
+1556:                                            IconButton(onClick = data.inc, modifier = Modifier.size(24.dp)) {
+1588:                        Button(
+1606:                        Button(
+1665:                        OutlinedButton(
+1675:                        Button(
+2706:                                                RadioButton(
+2789:                                                RadioButton(
+3039:                Button(
