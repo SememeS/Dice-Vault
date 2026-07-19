@@ -77,6 +77,19 @@ fun DiceRollerApp(
     var showCreateDialog by remember { mutableStateOf(false) }
     var selectedDiceSetForEdit by remember { mutableStateOf<DiceSet?>(null) }
 
+    var showSettingsDialog by remember { mutableStateOf(false) }
+    var enableShakeAnimation by remember { mutableStateOf(true) }
+    var enableHapticFeedback by remember { mutableStateOf(true) }
+    var enableSoundEffects by remember { mutableStateOf(false) }
+    var chosenAccentTheme by remember { mutableStateOf("violet") }
+
+    val haptic = androidx.compose.ui.platform.LocalHapticFeedback.current
+    LaunchedEffect(isRolling) {
+        if (!isRolling && currentTotal != null && enableHapticFeedback) {
+            haptic.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.LongPress)
+        }
+    }
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = DarkSlateBg,
@@ -115,23 +128,136 @@ fun DiceRollerApp(
                 }
             )
         },
-        floatingActionButton = {
-            if (activeTab == "sets") {
-                ExtendedFloatingActionButton(
+        bottomBar = {
+            NavigationBar(
+                containerColor = DarkCardBg,
+                tonalElevation = 8.dp,
+                modifier = Modifier
+                    .navigationBarsPadding()
+                    .border(
+                        width = 1.dp,
+                        color = Color(0xFF49454F).copy(alpha = 0.4f),
+                        shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
+                    )
+                    .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
+            ) {
+                // Tab 1: Dice Sets
+                NavigationBarItem(
+                    selected = activeTab == "sets",
+                    onClick = { activeTab = "sets" },
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Default.Casino,
+                            contentDescription = "Dice Sets",
+                            modifier = Modifier.size(22.dp)
+                        )
+                    },
+                    label = { Text("Dice Sets", fontSize = 11.sp) },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = DarkSlateBg,
+                        selectedTextColor = GoldAccent,
+                        indicatorColor = GoldAccent,
+                        unselectedIconColor = TextSecondary,
+                        unselectedTextColor = TextSecondary
+                    ),
+                    modifier = Modifier.testTag("nav_sets")
+                )
+
+                // Tab 2: Quick Tray
+                NavigationBarItem(
+                    selected = activeTab == "quick",
+                    onClick = { activeTab = "quick" },
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Default.PlayArrow,
+                            contentDescription = "Quick Tray",
+                            modifier = Modifier.size(22.dp)
+                        )
+                    },
+                    label = { Text("Quick Tray", fontSize = 11.sp) },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = DarkSlateBg,
+                        selectedTextColor = GoldAccent,
+                        indicatorColor = GoldAccent,
+                        unselectedIconColor = TextSecondary,
+                        unselectedTextColor = TextSecondary
+                    ),
+                    modifier = Modifier.testTag("nav_quick")
+                )
+
+                // Action: Custom Set (Direct Action, styled nicely as a central gold/violet button)
+                NavigationBarItem(
+                    selected = false,
                     onClick = {
                         selectedDiceSetForEdit = null
                         showCreateDialog = true
                     },
-                    modifier = Modifier.testTag("add_set_button"),
-                    containerColor = GoldAccent,
-                    contentColor = DarkSlateBg,
-                    shape = RoundedCornerShape(16.dp),
-                    elevation = FloatingActionButtonDefaults.elevation(8.dp)
-                ) {
-                    Icon(imageVector = Icons.Default.Add, contentDescription = "Add Set")
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = "Custom Set", fontWeight = FontWeight.Bold)
-                }
+                    icon = {
+                        Box(
+                            modifier = Modifier
+                                .size(28.dp)
+                                .background(GoldAccent, CircleShape),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = "Custom Set",
+                                tint = DarkSlateBg,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                    },
+                    label = { Text("Custom Set", fontSize = 11.sp, color = GoldAccent, fontWeight = FontWeight.Medium) },
+                    colors = NavigationBarItemDefaults.colors(
+                        unselectedIconColor = GoldAccent,
+                        unselectedTextColor = GoldAccent
+                    ),
+                    modifier = Modifier.testTag("nav_custom_set")
+                )
+
+                // Tab 3: Roll Log
+                NavigationBarItem(
+                    selected = activeTab == "history",
+                    onClick = { activeTab = "history" },
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Default.History,
+                            contentDescription = "Roll Log",
+                            modifier = Modifier.size(22.dp)
+                        )
+                    },
+                    label = { Text("Roll Log", fontSize = 11.sp) },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = DarkSlateBg,
+                        selectedTextColor = GoldAccent,
+                        indicatorColor = GoldAccent,
+                        unselectedIconColor = TextSecondary,
+                        unselectedTextColor = TextSecondary
+                    ),
+                    modifier = Modifier.testTag("nav_history")
+                )
+
+                // Action: Settings (Direct Action, styled nicely)
+                NavigationBarItem(
+                    selected = false,
+                    onClick = {
+                        showSettingsDialog = true
+                    },
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = "Settings",
+                            modifier = Modifier.size(22.dp),
+                            tint = TextSecondary
+                        )
+                    },
+                    label = { Text("Settings", fontSize = 11.sp, color = TextSecondary) },
+                    colors = NavigationBarItemDefaults.colors(
+                        unselectedIconColor = TextSecondary,
+                        unselectedTextColor = TextSecondary
+                    ),
+                    modifier = Modifier.testTag("nav_settings")
+                )
             }
         }
     ) { innerPadding ->
@@ -149,9 +275,6 @@ fun DiceRollerApp(
                 rollName = currentName,
                 rollType = currentType
             )
-
-            // Segmented Navigation Bar
-            TabSelector(activeTab = activeTab, onTabSelected = { activeTab = it })
 
             Spacer(modifier = Modifier.height(12.dp))
 
@@ -1711,6 +1834,203 @@ fun DiceShape(sides: Int, value: Int, color: Color, modifier: Modifier = Modifie
                 }
                 innerPath.close()
                 drawPath(path = innerPath, color = color, style = Stroke(width = 0.8.dp.toPx()))
+            }
+        }
+    }
+}
+
+@Composable
+fun SettingsDialog(
+    onDismiss: () -> Unit,
+    enableShakeAnimation: Boolean,
+    onShakeAnimationToggled: (Boolean) -> Unit,
+    enableHapticFeedback: Boolean,
+    onHapticFeedbackToggled: (Boolean) -> Unit,
+    enableSoundEffects: Boolean,
+    onSoundEffectsToggled: (Boolean) -> Unit,
+    chosenAccentTheme: String,
+    onAccentThemeChanged: (String) -> Unit
+) {
+    Dialog(onDismissRequest = onDismiss) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+                .shadow(12.dp, RoundedCornerShape(24.dp))
+                .border(1.dp, Color(0xFF49454F).copy(alpha = 0.5f), RoundedCornerShape(24.dp)),
+            colors = CardDefaults.cardColors(containerColor = DarkCardBg),
+            shape = RoundedCornerShape(24.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = null,
+                        tint = GoldAccent,
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Text(
+                        text = "App Settings",
+                        color = TextPrimary,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                // Setting 1: Roll Delay & Shake Animation
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "Dice Rolling Delay",
+                            color = TextPrimary,
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Text(
+                            text = "Play 600ms roll/shake delay for suspense",
+                            color = TextSecondary,
+                            fontSize = 11.sp
+                        )
+                    }
+                    Switch(
+                        checked = enableShakeAnimation,
+                        onCheckedChange = onShakeAnimationToggled,
+                        colors = SwitchDefaults.colors(
+                            checkedThumbColor = DarkSlateBg,
+                            checkedTrackColor = GoldAccent,
+                            uncheckedThumbColor = TextSecondary,
+                            uncheckedTrackColor = DarkSlateBg
+                        )
+                    )
+                }
+
+                HorizontalDivider(color = Color(0xFF49454F).copy(alpha = 0.3f), modifier = Modifier.padding(vertical = 8.dp))
+
+                // Setting 2: Sound Effects
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "Rolling Sound Effects",
+                            color = TextPrimary,
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Text(
+                            text = "Play fantasy sound effects when rolling",
+                            color = TextSecondary,
+                            fontSize = 11.sp
+                        )
+                    }
+                    Switch(
+                        checked = enableSoundEffects,
+                        onCheckedChange = onSoundEffectsToggled,
+                        colors = SwitchDefaults.colors(
+                            checkedThumbColor = DarkSlateBg,
+                            checkedTrackColor = GoldAccent,
+                            uncheckedThumbColor = TextSecondary,
+                            uncheckedTrackColor = DarkSlateBg
+                        )
+                    )
+                }
+
+                HorizontalDivider(color = Color(0xFF49454F).copy(alpha = 0.3f), modifier = Modifier.padding(vertical = 8.dp))
+
+                // Setting 3: Haptic Feedback
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "Haptic Vibration",
+                            color = TextPrimary,
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Text(
+                            text = "Vibrate device when dice stop rolling",
+                            color = TextSecondary,
+                            fontSize = 11.sp
+                        )
+                    }
+                    Switch(
+                        checked = enableHapticFeedback,
+                        onCheckedChange = onHapticFeedbackToggled,
+                        colors = SwitchDefaults.colors(
+                            checkedThumbColor = DarkSlateBg,
+                            checkedTrackColor = GoldAccent,
+                            uncheckedThumbColor = TextSecondary,
+                            uncheckedTrackColor = DarkSlateBg
+                        )
+                    )
+                }
+
+                HorizontalDivider(color = Color(0xFF49454F).copy(alpha = 0.3f), modifier = Modifier.padding(vertical = 8.dp))
+
+                // App version
+                Spacer(modifier = Modifier.height(12.dp))
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(DarkSlateBg, RoundedCornerShape(12.dp))
+                        .padding(12.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = "Dice Vault — Sophisticated Dark Edition",
+                            color = GoldAccent,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = "v1.1.0 • Crafted for Adventurers",
+                            color = TextSecondary,
+                            fontSize = 10.sp
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Button(
+                    onClick = onDismiss,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = GoldAccent,
+                        contentColor = DarkSlateBg
+                    ),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text(text = "Close", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                }
             }
         }
     }
