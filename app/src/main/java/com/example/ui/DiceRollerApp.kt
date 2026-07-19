@@ -95,6 +95,153 @@ enum class ButtonStyleTheme {
 }
 
 var currentButtonStyle by mutableStateOf(ButtonStyleTheme.PILL)
+var currentLanguage by mutableStateOf("English")
+
+val frTranslations = mapOf(
+    "Dice Sets" to "Sets de Dés",
+    "Quick Tray" to "Lancer Rapide",
+    "Roll Log" to "Historique",
+    "🎨 Presets" to "🎨 Prédéfini",
+    "🔧 Colorizer" to "🔧 Coloriseur",
+    "⚙️ Stylizer" to "⚙️ Styliseur",
+    "🌐 Language" to "🌐 Langues",
+    "THEME COLOR" to "COULEUR DU THÈME",
+    "DICE CAST" to "LANCER DE DÉS",
+    "ROLL TRAY" to "PLATEAU DE DÉS",
+    "ACTIVE ROLL" to "LANCER ACTIF",
+    "Rolling Dice..." to "Lancement des dés...",
+    "Choose a dice set or quick roll below to cast!" to "Choisissez un set de dés ou un lancer rapide ci-dessous pour lancer !",
+    "No Custom Dice Sets" to "Aucun set de dés personnalisé",
+    "Create custom roll collections using the '+' button." to "Créez des collections de lancers avec le bouton '+'.",
+    "The Dice Tray is Empty" to "Le plateau de dés est vide",
+    "Tap dice to load up your quick roll collection." to "Appuyez sur les dés pour charger votre collection.",
+    "Clear" to "Effacer",
+    "Roll" to "Lancer",
+    "NORMAL" to "NORMAL",
+    "Quick Tray Roll" to "Lancer Rapide",
+    "Quick Roll" to "Lancer Rapide",
+    "ADVANTAGE" to "AVANTAGE",
+    "DISADVANTAGE" to "DÉSAVANTAGE",
+    "LOGGED HISTORY" to "HISTORIQUE",
+    "No Rolls Recorded" to "Aucun Lancer Enregistré",
+    "Roll any dice set to record the logs." to "Lancez n'importe quel dé pour l'enregistrer.",
+    "Clear Logs" to "Effacer l'historique",
+    "Clear Log History?" to "Effacer l'historique ?",
+    "This will permanently delete all historic roll logs from the database." to "Cela supprimera définitivement tout l'historique de la base de données.",
+    "Cancel" to "Annuler",
+    "Clear All" to "Tout effacer",
+    "EDIT DICE SET" to "ÉDITER SET DE DÉS",
+    "CREATE CUSTOM SET" to "CRÉER UN SET",
+    "Set Name (e.g., Fireball Lvl 3)" to "Nom du Set (ex: Boule de Feu Niv 3)",
+    "Short Description" to "Courte Description",
+    "SELECT DICE QUANTITIES" to "SÉLECTIONNER LES QUANTITÉS",
+    "STATIC MODIFIER" to "MODIFICATEUR STATIQUE",
+    "ADD MODIFIER" to "AJOUTER MODIFICATEUR",
+    "Save Set" to "Sauvegarder",
+    "Delete Set" to "Supprimer le set",
+    "TAP TO ACTIVATE PRESET" to "APPUYEZ POUR ACTIVER LE THÈME",
+    "Each theme customizes the layout, buttons, accent glow, and texts:" to "Chaque thème personnalise la disposition, les boutons et les couleurs :",
+    "GRANULAR ELEMENT COLORS" to "COULEURS DES ÉLÉMENTS",
+    "Tap any row to open the interactive Color Picker, or use the quick swatches below:" to "Appuyez pour ouvrir le sélecteur de couleurs, ou utilisez les palettes rapides :",
+    "App Background" to "Fond de l'application",
+    "Panel / Card Background" to "Fond des cartes",
+    "Highlight / D20 Accent" to "Accentuation D20",
+    "Button Fill / Container Accent" to "Couleur des boutons",
+    "Secondary highlights" to "Accentuations secondaires",
+    "Rage / Warning Accent" to "Accent d'alerte / Rage",
+    "Primary Text" to "Texte principal",
+    "Secondary Text" to "Texte secondaire",
+    "Advantage Button Color" to "Bouton Avantage",
+    "Disadvantage Button Color" to "Bouton Désavantage",
+    "Dice Roll Result Color" to "Résultat des dés",
+    "Dice Roll Animation Color" to "Animation des dés",
+    "d4 Color" to "Couleur d4",
+    "d6 Color" to "Couleur d6",
+    "d8 Color" to "Couleur d8",
+    "d10 Color" to "Couleur d10",
+    "d12 Color" to "Couleur d12",
+    "d20 Color" to "Couleur d20",
+    "d100 Color" to "Couleur d100",
+    "Dice Tray Gradient Top" to "Plateau - Dégradé haut",
+    "Dice Tray Gradient Bottom" to "Plateau - Dégradé bas",
+    "Active Roll Background" to "Fond du lancer actif",
+    "Active Roll Content Color" to "Texte du lancer actif",
+    "UI VISUAL STYLE" to "STYLE VISUEL",
+    "Transform the structural aesthetic of cards, containers, and borders:" to "Transformez l'esthétique des cartes, des conteneurs et des bordures :",
+    "Classic Rounded" to "Classique arrondi",
+    "Elegant Material curves & subtle shadows" to "Courbes Material élégantes et ombres douces",
+    "Glassmorphic" to "Effet Verre",
+    "Translucent glass panels with frosted borders" to "Panneaux de verre translucide avec des bordures givrées",
+    "Neon Glow" to "Lueur Néon",
+    "Sharp glowing tech borders & neon sci-fi halo" to "Bordures technologiques lumineuses et halo de science-fiction",
+    "Flat Minimalist" to "Plat minimaliste",
+    "Stark, crisp flat 2D retro design" to "Design 2D plat et épuré rétro",
+    "Obsidian Shard" to "Éclat d'obsidienne",
+    "Hard angled cuts resembling carved stone" to "Coupes en biais dures ressemblant à la pierre sculptée",
+    "Chunky Arcade" to "Arcade Massive",
+    "Thick bold borders with heavy drop shadows" to "Bordures épaisses avec des ombres marquées",
+    "Soft Organic" to "Doux organique",
+    "Fully rounded soft edges" to "Bords doux entièrement arrondis",
+    "BUTTON STYLE AESTHETIC" to "STYLE DES BOUTONS",
+    "Choose the shape and curvature of all action buttons:" to "Choisissez la forme et la courbure de tous les boutons :",
+    "Pill Shaped" to "Forme de pilule",
+    "Highly pill-shaped friendly curves" to "Courbes douces très arrondies en pilule",
+    "Rounded Corner" to "Coins arrondis",
+    "Standard subtle rounded corners" to "Coins standard subtilement arrondis",
+    "Sharp Rectangle" to "Rectangle net",
+    "Hard 90-degree corners" to "Angles droits stricts de 90 degrés",
+    "Cut Corners" to "Coins coupés",
+    "Sci-fi chamfered edges" to "Bords chanfreinés style science-fiction",
+    "USER PREFERENCES" to "PRÉFÉRENCES UTILISATEUR",
+    "Toggle game mechanisms and haptics for custom rolling suspense:" to "Activez les mécanismes de jeu et le retour haptique pour le suspense :",
+    "Dice Rolling Delay" to "Délai du lancer",
+    "Play 600ms roll delay for suspense" to "600 ms de délai pour le suspense",
+    "Rolling Sound Effects" to "Effets sonores",
+    "Play fantasy sound effects when rolling" to "Jouer des sons fantasy lors du lancer",
+    "Haptic Vibration" to "Vibration haptique",
+    "Vibrate device when dice stop rolling" to "Vibrer quand les dés s'arrêtent",
+    "LANGUAGE" to "LANGUE",
+    "Select your preferred app language:" to "Sélectionnez la langue de l'application :",
+    "Legendary Colorizer" to "Coloriseur Légendaire",
+    "v1.3.0 • Unleash Your Aesthetic" to "v1.3.0 • Libérez votre esthétique",
+    "Close Settings" to "Fermer",
+    "Save Custom Preset" to "Sauvegarder le Préréglage",
+    "Enter a name for your custom preset style:" to "Entrez un nom pour votre style personnalisé :",
+    "My Custom Style" to "Mon Style",
+    "Save" to "Sauvegarder",
+    "Save Current Style as Custom Preset" to "Sauvegarder le style en tant que Préréglage",
+    "Hex Code:" to "Code Hex :",
+    "Hue" to "Teinte",
+    "Saturation" to "Saturation",
+    "Brightness" to "Luminosité",
+    "Custom Roll" to "Lancer Personnalisé",
+    "Formula: " to "Formule : ",
+    "Rolls: " to "Lancers : ",
+    "Settings" to "Paramètres",
+    "English" to "English",
+    "Français" to "Français",
+    "Toggle color picker" to "Afficher couleurs",
+    "Menu" to "Menu",
+    "Delete" to "Suppr.",
+    "Selected" to "Sélectionné",
+    "Active" to "Actif",
+    "Pen and Paper" to "Plume et Papier",
+    "High contrast ink & white" to "Contraste élevé encre & blanc",
+    "Obsidian Violet" to "Violet Obsidienne",
+    "Muted cosmic dark" to "Sombre cosmique discret",
+    "Metal" to "Métal",
+    "Metal greyscale" to "Niveaux de gris métal"
+)
+
+@Composable
+fun t(key: String): String {
+    return if (currentLanguage == "Français") frTranslations[key] ?: key else key
+}
+fun String.t(): String {
+    return if (currentLanguage == "Français") frTranslations[this] ?: this else this
+}
+
+
 
 @Composable
 fun getButtonShape(defaultRadius: androidx.compose.ui.unit.Dp = 12.dp): androidx.compose.foundation.shape.CornerBasedShape {
@@ -203,11 +350,11 @@ fun DiceRollerApp(
                     icon = {
                         Icon(
                             imageVector = Icons.Default.Casino,
-                            contentDescription = "Dice Sets",
+                            contentDescription = "Dice Sets".t(),
                             modifier = Modifier.size(22.dp)
                         )
                     },
-                    label = { Text("Dice Sets", fontSize = 11.sp) },
+                    label = { Text("Dice Sets".t(), fontSize = 10.sp, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                     colors = NavigationBarItemDefaults.colors(
                         selectedIconColor = DarkSlateBg,
                         selectedTextColor = GoldAccent,
@@ -225,11 +372,11 @@ fun DiceRollerApp(
                     icon = {
                         Icon(
                             imageVector = Icons.Default.PlayArrow,
-                            contentDescription = "Quick Tray",
+                            contentDescription = "Quick Tray".t(),
                             modifier = Modifier.size(22.dp)
                         )
                     },
-                    label = { Text("Quick Tray", fontSize = 11.sp) },
+                    label = { Text("Quick Tray".t(), fontSize = 10.sp, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                     colors = NavigationBarItemDefaults.colors(
                         selectedIconColor = DarkSlateBg,
                         selectedTextColor = GoldAccent,
@@ -277,11 +424,11 @@ fun DiceRollerApp(
                     icon = {
                         Icon(
                             imageVector = Icons.Default.History,
-                            contentDescription = "Roll Log",
+                            contentDescription = "Roll Log".t(),
                             modifier = Modifier.size(22.dp)
                         )
                     },
-                    label = { Text("Roll Log", fontSize = 11.sp) },
+                    label = { Text("Roll Log".t(), fontSize = 10.sp, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                     colors = NavigationBarItemDefaults.colors(
                         selectedIconColor = DarkSlateBg,
                         selectedTextColor = GoldAccent,
@@ -301,12 +448,12 @@ fun DiceRollerApp(
                     icon = {
                         Icon(
                             imageVector = Icons.Default.Settings,
-                            contentDescription = "Settings",
+                            contentDescription = "Settings".t(),
                             modifier = Modifier.size(22.dp),
                             tint = TextSecondary
                         )
                     },
-                    label = { Text("Settings", fontSize = 11.sp, color = TextSecondary) },
+                    label = { Text("Settings".t(), fontSize = 11.sp, color = TextSecondary) },
                     colors = NavigationBarItemDefaults.colors(
                         unselectedIconColor = TextSecondary,
                         unselectedTextColor = TextSecondary
@@ -405,9 +552,9 @@ fun TabSelector(
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         val tabs = listOf(
-            Triple("sets", "Dice Sets", Icons.Default.Casino),
-            Triple("quick", "Quick Tray", Icons.Default.PlayArrow),
-            Triple("history", "Roll Log", Icons.Default.History)
+            Triple("sets", "Dice Sets".t(), Icons.Default.Casino),
+            Triple("quick", "Quick Tray".t(), Icons.Default.PlayArrow),
+            Triple("history", "Roll Log".t(), Icons.Default.History)
         )
 
         tabs.forEach { (key, label, icon) ->
@@ -436,13 +583,13 @@ fun TabSelector(
                     imageVector = icon,
                     contentDescription = null,
                     tint = contentColor,
-                    modifier = Modifier.size(18.dp)
+                    modifier = Modifier.size(16.dp)
                 )
-                Spacer(modifier = Modifier.width(6.dp))
+                Spacer(modifier = Modifier.width(4.dp))
                 Text(
                     text = label,
                     color = contentColor,
-                    fontSize = 13.sp,
+                    fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
@@ -533,7 +680,7 @@ fun ActiveRollingTray(
                     }
                     Spacer(modifier = Modifier.height(18.dp))
                     Text(
-                        text = "Rolling Dice...",
+                        text = "Rolling Dice...".t(),
                         color = DiceRollAnimationColor,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 2.sp,
@@ -549,7 +696,7 @@ fun ActiveRollingTray(
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "ACTIVE ROLL",
+                            text = "ACTIVE ROLL".t(),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
                             color = DiceRollResultColor.copy(alpha = 0.8f),
@@ -557,7 +704,7 @@ fun ActiveRollingTray(
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = rollName.ifEmpty { "Custom Roll" },
+                            text = rollName.ifEmpty { "Custom Roll".t() },
                             color = TextPrimary,
                             fontWeight = FontWeight.Bold,
                             fontSize = 22.sp,
@@ -567,7 +714,7 @@ fun ActiveRollingTray(
                         Spacer(modifier = Modifier.height(2.dp))
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
-                                text = "Formula: $formula",
+                                text = "Formula: ".t() + formula,
                                 color = TextSecondary,
                                 fontSize = 14.sp
                             )
@@ -581,7 +728,7 @@ fun ActiveRollingTray(
                                     modifier = Modifier.padding(2.dp)
                                 ) {
                                     Text(
-                                        text = rollType,
+                                        text = rollType.t(),
                                         fontSize = 10.sp,
                                         fontWeight = FontWeight.Bold,
                                         color = Color.White,
@@ -592,7 +739,7 @@ fun ActiveRollingTray(
                         }
                     }
 
-                    // Giant active die total result matching "Obsidian Shard" - made larger
+                    // Giant active die total result matching "Obsidian Shard".t() - made larger
                     Box(
                         modifier = Modifier
                             .size(96.dp)
@@ -621,7 +768,7 @@ fun ActiveRollingTray(
 
                 // Individual Dice Rolls visual representation
                 Text(
-                    text = "DICE CAST",
+                    text = "DICE CAST".t(),
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Bold,
                     color = TextSecondary,
@@ -666,14 +813,14 @@ fun ActiveRollingTray(
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
-                        text = "The Dice Tray is Empty",
+                        text = "The Dice Tray is Empty".t(),
                         color = TextPrimary,
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Choose a dice set or quick roll below to cast!",
+                        text = "Choose a dice set or quick roll below to cast!".t(),
                         color = TextSecondary,
                         fontSize = 13.sp,
                         textAlign = TextAlign.Center
@@ -740,8 +887,8 @@ fun DiceSetsTab(
                     modifier = Modifier.size(64.dp)
                 )
                 Spacer(modifier = Modifier.height(12.dp))
-                Text(text = "No Custom Dice Sets", color = TextPrimary, fontWeight = FontWeight.Bold)
-                Text(text = "Create custom roll collections using the '+' button.", color = TextSecondary, fontSize = 12.sp)
+                Text(text = "No Custom Dice Sets".t(), color = TextPrimary, fontWeight = FontWeight.Bold)
+                Text(text = "Create custom roll collections using the '+' button.".t(), color = TextSecondary, fontSize = 12.sp)
             }
         }
     } else {
@@ -805,7 +952,7 @@ fun DiceSetsTab(
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.MoreVert,
-                                        contentDescription = "Menu",
+                                        contentDescription = "Menu".t(),
                                         tint = TextSecondary
                                     )
                                 }
@@ -824,7 +971,7 @@ fun DiceSetsTab(
                                     )
                                     if (set.isCustom) {
                                         DropdownMenuItem(
-                                            text = { Text("Delete Set", color = CrimsonAccent) },
+                                            text = { Text("Delete Set".t(), color = CrimsonAccent) },
                                             leadingIcon = { Icon(Icons.Default.Delete, contentDescription = null, tint = CrimsonAccent) },
                                             onClick = {
                                                 expandedMenu = false
@@ -894,7 +1041,7 @@ fun DiceSetsTab(
                                     modifier = Modifier.size(16.dp)
                                 )
                                 Spacer(modifier = Modifier.width(4.dp))
-                                Text("Roll", fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                                Text("Roll".t(), fontSize = 13.sp, fontWeight = FontWeight.Bold)
                             }
 
                             if (hasD20) {
@@ -937,7 +1084,7 @@ fun QuickRollerTab(
     var d100Count by remember { mutableIntStateOf(0) }
     var modifierValue by remember { mutableIntStateOf(0) }
 
-    var selectedRollType by remember { mutableStateOf("NORMAL") } // "NORMAL", "ADVANTAGE", "DISADVANTAGE"
+    var selectedRollType by remember { mutableStateOf("NORMAL") } // "NORMAL".t(), "ADVANTAGE".t(), "DISADVANTAGE".t()
 
     val hasSelectedDice = (d4Count + d6Count + d8Count + d10Count + d12Count + d20Count + d100Count) > 0
 
@@ -955,7 +1102,7 @@ fun QuickRollerTab(
                 letterSpacing = 1.2.sp
             )
             Text(
-                text = "Tap dice to load up your quick roll collection.",
+                text = "Tap dice to load up your quick roll collection.".t(),
                 color = TextSecondary,
                 fontSize = 12.sp
             )
@@ -1081,7 +1228,7 @@ fun QuickRollerTab(
             ) {
                 Column(modifier = Modifier.padding(14.dp)) {
                     Text(
-                        text = "STATIC MODIFIER",
+                        text = "STATIC MODIFIER".t(),
                         fontWeight = FontWeight.Bold,
                         color = GoldAccent,
                         fontSize = 10.sp
@@ -1162,7 +1309,7 @@ fun QuickRollerTab(
                                     modifier = Modifier.weight(1f)
                                 ) {
                                     Text(
-                                        text = opt,
+                                        text = opt.t(),
                                         fontSize = 10.sp,
                                         fontWeight = FontWeight.Bold,
                                         maxLines = 1,
@@ -1193,7 +1340,7 @@ fun QuickRollerTab(
                         d20Count = 0
                         d100Count = 0
                         modifierValue = 0
-                        selectedRollType = "NORMAL"
+                        selectedRollType = "NORMAL".t()
                     },
                     border = BorderStroke(1.dp, Color(0xFF32323C)),
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = CrimsonAccent),
@@ -1201,7 +1348,7 @@ fun QuickRollerTab(
                     modifier = Modifier.height(48.dp),
                     enabled = hasSelectedDice || modifierValue != 0
                 ) {
-                    Icon(imageVector = Icons.Default.Refresh, contentDescription = "Clear")
+                    Icon(imageVector = Icons.Default.Refresh, contentDescription = "Clear".t())
                 }
 
                 // Roll Button
@@ -1209,7 +1356,7 @@ fun QuickRollerTab(
                     shape = getButtonShape(),
                     onClick = {
                         onRoll(
-                            "Quick Tray Roll",
+                            "Quick Tray Roll".t(),
                             d4Count,
                             d6Count,
                             d8Count,
@@ -1218,7 +1365,7 @@ fun QuickRollerTab(
                             d20Count,
                             d100Count,
                             modifierValue,
-                            if (d20Count > 0) selectedRollType else "NORMAL"
+                            if (d20Count > 0) selectedRollType else "NORMAL".t()
                         )
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = GoldAccent, contentColor = Color.White),
@@ -1230,7 +1377,7 @@ fun QuickRollerTab(
                 ) {
                     Icon(imageVector = Icons.Default.Casino, contentDescription = null)
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = "ROLL TRAY", fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                    Text(text = "ROLL TRAY".t(), fontWeight = FontWeight.Bold, fontSize = 13.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
             }
         }
@@ -1253,7 +1400,7 @@ fun RollHistoryTab(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "LOGGED HISTORY",
+                text = "LOGGED HISTORY".t(),
                 fontWeight = FontWeight.Bold,
                 color = GoldAccent,
                 fontSize = 11.sp,
@@ -1265,7 +1412,7 @@ fun RollHistoryTab(
                                 ) {
                     Icon(imageVector = Icons.Default.Delete, contentDescription = null, modifier = Modifier.size(16.dp), tint = CrimsonAccent)
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text(text = "Clear Logs", color = CrimsonAccent, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                    Text(text = "Clear Logs".t(), color = CrimsonAccent, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                 }
             }
         }
@@ -1287,8 +1434,8 @@ fun RollHistoryTab(
                         modifier = Modifier.size(54.dp)
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text(text = "No Rolls Recorded", color = TextPrimary, fontWeight = FontWeight.Bold)
-                    Text(text = "Roll any dice set to record the logs.", color = TextSecondary, fontSize = 12.sp)
+                    Text(text = "No Rolls Recorded".t(), color = TextPrimary, fontWeight = FontWeight.Bold)
+                    Text(text = "Roll any dice set to record the logs.".t(), color = TextSecondary, fontSize = 12.sp)
                 }
             }
         } else {
@@ -1316,7 +1463,7 @@ fun RollHistoryTab(
                             ) {
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
-                                        text = log.name.ifEmpty { "Quick Roll" },
+                                        text = log.name.ifEmpty { "Quick Roll".t() },
                                         fontWeight = FontWeight.Bold,
                                         color = TextPrimary,
                                         fontSize = 14.sp,
@@ -1367,7 +1514,7 @@ fun RollHistoryTab(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Text(
-                                        text = "Rolls: ",
+                                        text = "Rolls: ".t(),
                                         color = TextSecondary,
                                         fontSize = 11.sp,
                                         fontWeight = FontWeight.Bold
@@ -1392,14 +1539,14 @@ fun RollHistoryTab(
     if (showConfirmClear) {
         AlertDialog(
             onDismissRequest = { showConfirmClear = false },
-            title = { Text("Clear Log History?", color = TextPrimary) },
-            text = { Text("This will permanently delete all historic roll logs from the database.", color = TextSecondary) },
+            title = { Text("Clear Log History?".t(), color = TextPrimary) },
+            text = { Text("This will permanently delete all historic roll logs from the database.".t(), color = TextSecondary) },
             containerColor = DarkCardBg,
             dismissButton = {
                 TextButton(onClick = { showConfirmClear = false },
                                     shape = getButtonShape()
                                 ) {
-                    Text("Cancel", color = TextSecondary)
+                    Text("Cancel".t(), color = TextSecondary)
                 }
             },
             confirmButton = {
@@ -1409,7 +1556,7 @@ fun RollHistoryTab(
                     onClearHistory()
                     showConfirmClear = false
                 }) {
-                    Text("Clear All", color = CrimsonAccent, fontWeight = FontWeight.Bold)
+                    Text("Clear All".t(), color = CrimsonAccent, fontWeight = FontWeight.Bold)
                 }
             }
         )
@@ -1457,7 +1604,7 @@ fun DiceSetDialog(
             ) {
                 item {
                     Text(
-                        text = if (diceSet == null) "CREATE CUSTOM SET" else "EDIT DICE SET",
+                        text = if (diceSet == null) "CREATE CUSTOM SET".t() else "EDIT DICE SET".t(),
                         fontWeight = FontWeight.Bold,
                         color = GoldAccent,
                         fontSize = 14.sp,
@@ -1472,7 +1619,7 @@ fun DiceSetDialog(
                         OutlinedTextField(
                             value = name,
                             onValueChange = { name = it },
-                            label = { Text("Set Name (e.g., Fireball Lvl 3)") },
+                            label = { Text("Set Name (e.g., Fireball Lvl 3)".t()) },
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedTextColor = TextPrimary,
                                 unfocusedTextColor = TextPrimary,
@@ -1490,7 +1637,7 @@ fun DiceSetDialog(
                         OutlinedTextField(
                             value = description,
                             onValueChange = { description = it },
-                            label = { Text("Short Description") },
+                            label = { Text("Short Description".t()) },
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedTextColor = TextPrimary,
                                 unfocusedTextColor = TextPrimary,
@@ -1511,7 +1658,7 @@ fun DiceSetDialog(
                 // Grid of Counter controls
                 item {
                     Text(
-                        text = "SELECT DICE QUANTITIES",
+                        text = "SELECT DICE QUANTITIES".t(),
                         fontWeight = FontWeight.Bold,
                         color = GoldAccent,
                         fontSize = 11.sp
@@ -1578,7 +1725,7 @@ fun DiceSetDialog(
                 // Modifier Counter
                 item {
                     Text(
-                        text = "ADD MODIFIER",
+                        text = "ADD MODIFIER".t(),
                         fontWeight = FontWeight.Bold,
                         color = GoldAccent,
                         fontSize = 11.sp
@@ -1626,7 +1773,7 @@ fun DiceSetDialog(
                 // Theme Color Palette Selection
                 item {
                     Text(
-                        text = "THEME COLOR",
+                        text = "THEME COLOR".t(),
                         fontWeight = FontWeight.Bold,
                         color = GoldAccent,
                         fontSize = 11.sp
@@ -1654,7 +1801,7 @@ fun DiceSetDialog(
                                 if (isChosen) {
                                     Icon(
                                         imageVector = Icons.Default.Check,
-                                        contentDescription = "Selected",
+                                        contentDescription = "Selected".t(),
                                         tint = Color.White,
                                         modifier = Modifier.size(16.dp)
                                     )
@@ -1677,7 +1824,7 @@ fun DiceSetDialog(
                             shape = getButtonShape(),
                             modifier = Modifier.weight(1f)
                         ) {
-                            Text("Cancel")
+                            Text("Cancel".t())
                         }
 
                         Button(
@@ -1708,7 +1855,7 @@ fun DiceSetDialog(
                                 .testTag("save_set_button"),
                             enabled = name.isNotEmpty() && hasAnyDice
                         ) {
-                            Text("Save Set", fontWeight = FontWeight.Bold)
+                            Text("Save Set".t(), fontWeight = FontWeight.Bold)
                         }
                     }
                 }
@@ -2071,7 +2218,7 @@ private fun PremiumColorPicker(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Hue", color = TextSecondary, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                Text("Hue".t(), color = TextSecondary, fontSize = 11.sp, fontWeight = FontWeight.Bold)
                 Text("${hue.toInt()}°", color = GoldAccent, fontSize = 11.sp, fontFamily = FontFamily.Monospace)
             }
             Box(
@@ -2107,7 +2254,7 @@ private fun PremiumColorPicker(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Saturation", color = TextSecondary, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                Text("Saturation".t(), color = TextSecondary, fontSize = 11.sp, fontWeight = FontWeight.Bold)
                 Text("${(saturation * 100).toInt()}%", color = GoldAccent, fontSize = 11.sp, fontFamily = FontFamily.Monospace)
             }
             Box(
@@ -2143,7 +2290,7 @@ private fun PremiumColorPicker(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Brightness", color = TextSecondary, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                Text("Brightness".t(), color = TextSecondary, fontSize = 11.sp, fontWeight = FontWeight.Bold)
                 Text("${(value * 100).toInt()}%", color = GoldAccent, fontSize = 11.sp, fontFamily = FontFamily.Monospace)
             }
             Box(
@@ -2180,7 +2327,7 @@ private fun PremiumColorPicker(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Text("Hex Code:", color = TextSecondary, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+            Text("Hex Code:".t(), color = TextSecondary, fontSize = 11.sp, fontWeight = FontWeight.Bold)
             BasicTextField(
                 value = hexInput,
                 onValueChange = { newValue ->
@@ -2257,8 +2404,8 @@ fun SettingsDialog(
 ) {
     val presets = listOf(
         ThemePreset(
-            name = "Pen and Paper",
-            description = "High contrast ink & white",
+            name = "Pen and Paper".t(),
+            description = "High contrast ink & white".t(),
             bg = Color(0xFFFFFFFF),
             cardBg = Color(0xFFF3F4F6),
             accent = Color(0xFF111827),
@@ -2271,8 +2418,8 @@ fun SettingsDialog(
             buttonStyle = ButtonStyleTheme.SHARP
         ),
         ThemePreset(
-            name = "Obsidian Violet",
-            description = "Muted cosmic dark",
+            name = "Obsidian Violet".t(),
+            description = "Muted cosmic dark".t(),
             bg = Color(0xFF1C1B1F),
             cardBg = Color(0xFF2B2930),
             accent = Color(0xFF7E57C2),
@@ -2289,8 +2436,8 @@ fun SettingsDialog(
             buttonStyle = ButtonStyleTheme.PILL
         ),
         ThemePreset(
-            name = "Metal",
-            description = "Metal greyscale",
+            name = "Metal".t(),
+            description = "Metal greyscale".t(),
             bg = Color(0xFF141414),
             cardBg = Color(0xFF262626),
             accent = Color(0xFFB0B0B0),
@@ -2370,7 +2517,7 @@ fun SettingsDialog(
                     )
                     Spacer(modifier = Modifier.width(10.dp))
                     Text(
-                        text = "Settings",
+                        text = "Settings".t(),
                         color = TextPrimary,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
@@ -2381,9 +2528,10 @@ fun SettingsDialog(
 
                 // Custom Material Segmented Tab Option Picker
                 val tabs = listOf(
-                    Triple("🎨 Presets", 0, null as androidx.compose.ui.graphics.vector.ImageVector?),
-                    Triple("🔧 Colorizer", 1, null as androidx.compose.ui.graphics.vector.ImageVector?),
-                    Triple("⚙️ Stylizer", 2, null as androidx.compose.ui.graphics.vector.ImageVector?)
+                    Triple("🎨 Presets".t(), 0, null as androidx.compose.ui.graphics.vector.ImageVector?),
+                    Triple("🔧 Colorizer".t(), 1, null as androidx.compose.ui.graphics.vector.ImageVector?),
+                    Triple("⚙️ Stylizer".t(), 2, null as androidx.compose.ui.graphics.vector.ImageVector?),
+                    Triple("🌐 Language".t(), 3, null as androidx.compose.ui.graphics.vector.ImageVector?)
                 )
 
                 Row(
@@ -2419,10 +2567,12 @@ fun SettingsDialog(
                                     Spacer(modifier = Modifier.width(4.dp))
                                 }
                                 Text(
-                                    text = title.substring(2), // Skip emoji for cleaner UI
+                                    text = title.replace(Regex("^.*?\\s"), ""), // Skip emoji for cleaner UI
                                     color = if (isSelected) DarkSlateBg else TextPrimary,
-                                    fontSize = 11.sp,
-                                    fontWeight = FontWeight.Bold
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
                                 )
                             }
                         }
@@ -2442,7 +2592,7 @@ fun SettingsDialog(
                             // PRESET THEMES SECTION
                             item {
                                 Text(
-                                    text = "TAP TO ACTIVATE PRESET",
+                                    text = "TAP TO ACTIVATE PRESET".t(),
                                     color = GoldAccent,
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.Bold,
@@ -2450,7 +2600,7 @@ fun SettingsDialog(
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
-                                    text = "Each theme customizes the layout, buttons, accent glow, and texts:",
+                                    text = "Each theme customizes the layout, buttons, accent glow, and texts:".t(),
                                     color = TextSecondary,
                                     fontSize = 11.sp
                                 )
@@ -2522,7 +2672,7 @@ fun SettingsDialog(
                                                             .padding(horizontal = 6.dp, vertical = 2.dp)
                                                     ) {
                                                         Text(
-                                                            text = "Active",
+                                                            text = "Active".t(),
                                                             color = preset.accent,
                                                             fontSize = 9.sp,
                                                             fontWeight = FontWeight.Bold
@@ -2549,7 +2699,7 @@ fun SettingsDialog(
                                             if (isCustom) {
                                                 Spacer(modifier = Modifier.width(8.dp))
                                                 IconButton(onClick = { customThemePresets.remove(preset) }, modifier = Modifier.size(24.dp)) {
-                                                    Icon(Icons.Default.Delete, contentDescription = "Delete", tint = preset.errorAccent, modifier = Modifier.size(16.dp))
+                                                    Icon(Icons.Default.Delete, contentDescription = "Delete".t(), tint = preset.errorAccent, modifier = Modifier.size(16.dp))
                                                 }
                                             }
                                         }
@@ -2567,7 +2717,7 @@ fun SettingsDialog(
                                 ) {
                                     Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(16.dp))
                                     Spacer(modifier = Modifier.width(8.dp))
-                                    Text("Save Current Style as Custom Preset", fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                                    Text("Save Current Style as Custom Preset".t(), fontWeight = FontWeight.Bold, fontSize = 12.sp)
                                 }
                             }
                         }
@@ -2575,14 +2725,14 @@ fun SettingsDialog(
                             // GRANULAR UI ELEMENT CUSTOMIZER
                             item {
                                 Text(
-                                    text = "GRANULAR ELEMENT COLORS",
+                                    text = "GRANULAR ELEMENT COLORS".t(),
                                     color = GoldAccent,
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.Bold,
                                     letterSpacing = 1.sp
                                 )
                                 Text(
-                                    text = "Tap any row to open the interactive Color Picker, or use the quick swatches below:",
+                                    text = "Tap any row to open the interactive Color Picker, or use the quick swatches below:".t(),
                                     color = TextSecondary,
                                     fontSize = 11.sp,
                                     modifier = Modifier.padding(top = 2.dp)
@@ -2590,29 +2740,29 @@ fun SettingsDialog(
                             }
 
                             val elementsList = listOf(
-                                Triple("App Background", DarkSlateBg) { c: Color -> DarkSlateBg = c },
-                                Triple("Panel / Card Background", DarkCardBg) { c: Color -> DarkCardBg = c },
-                                Triple("Highlight / D20 Accent", GoldAccent) { c: Color -> GoldAccent = c },
-                                Triple("Button Fill / Container Accent", DarkGoldAccent) { c: Color -> DarkGoldAccent = c },
-                                Triple("Secondary highlights", AmberGlow) { c: Color -> AmberGlow = c },
-                                Triple("Rage / Warning Accent", CrimsonAccent) { c: Color -> CrimsonAccent = c },
-                                Triple("Primary Text", TextPrimary) { c: Color -> TextPrimary = c },
-                                Triple("Secondary Text", TextSecondary) { c: Color -> TextSecondary = c },
-                                Triple("Advantage Button Color", AdvantageColor) { c: Color -> AdvantageColor = c },
-                                Triple("Disadvantage Button Color", DisadvantageColor) { c: Color -> DisadvantageColor = c },
-                                Triple("Dice Roll Result Color", DiceRollResultColor) { c: Color -> DiceRollResultColor = c },
-                                Triple("Dice Roll Animation Color", DiceRollAnimationColor) { c: Color -> DiceRollAnimationColor = c },
-                                Triple("d4 Color", D4Color) { c: Color -> D4Color = c },
-                                Triple("d6 Color", D6Color) { c: Color -> D6Color = c },
-                                Triple("d8 Color", D8Color) { c: Color -> D8Color = c },
-                                Triple("d10 Color", D10Color) { c: Color -> D10Color = c },
-                                Triple("d12 Color", D12Color) { c: Color -> D12Color = c },
-                                Triple("d20 Color", D20Color) { c: Color -> D20Color = c },
-                                Triple("d100 Color", D100Color) { c: Color -> D100Color = c },
-                                Triple("Dice Tray Gradient Top", DiceTrayGradientStart) { c: Color -> DiceTrayGradientStart = c },
-                                Triple("Dice Tray Gradient Bottom", DiceTrayGradientEnd) { c: Color -> DiceTrayGradientEnd = c },
-                                Triple("Active Roll Background", ActiveRollBackgroundColor) { c: Color -> ActiveRollBackgroundColor = c },
-                                Triple("Active Roll Content Color", ActiveRollContentColor) { c: Color -> ActiveRollContentColor = c }
+                                Triple("App Background".t(), DarkSlateBg) { c: Color -> DarkSlateBg = c },
+                                Triple("Panel / Card Background".t(), DarkCardBg) { c: Color -> DarkCardBg = c },
+                                Triple("Highlight / D20 Accent".t(), GoldAccent) { c: Color -> GoldAccent = c },
+                                Triple("Button Fill / Container Accent".t(), DarkGoldAccent) { c: Color -> DarkGoldAccent = c },
+                                Triple("Secondary highlights".t(), AmberGlow) { c: Color -> AmberGlow = c },
+                                Triple("Rage / Warning Accent".t(), CrimsonAccent) { c: Color -> CrimsonAccent = c },
+                                Triple("Primary Text".t(), TextPrimary) { c: Color -> TextPrimary = c },
+                                Triple("Secondary Text".t(), TextSecondary) { c: Color -> TextSecondary = c },
+                                Triple("Advantage Button Color".t(), AdvantageColor) { c: Color -> AdvantageColor = c },
+                                Triple("Disadvantage Button Color".t(), DisadvantageColor) { c: Color -> DisadvantageColor = c },
+                                Triple("Dice Roll Result Color".t(), DiceRollResultColor) { c: Color -> DiceRollResultColor = c },
+                                Triple("Dice Roll Animation Color".t(), DiceRollAnimationColor) { c: Color -> DiceRollAnimationColor = c },
+                                Triple("d4 Color".t(), D4Color) { c: Color -> D4Color = c },
+                                Triple("d6 Color".t(), D6Color) { c: Color -> D6Color = c },
+                                Triple("d8 Color".t(), D8Color) { c: Color -> D8Color = c },
+                                Triple("d10 Color".t(), D10Color) { c: Color -> D10Color = c },
+                                Triple("d12 Color".t(), D12Color) { c: Color -> D12Color = c },
+                                Triple("d20 Color".t(), D20Color) { c: Color -> D20Color = c },
+                                Triple("d100 Color".t(), D100Color) { c: Color -> D100Color = c },
+                                Triple("Dice Tray Gradient Top".t(), DiceTrayGradientStart) { c: Color -> DiceTrayGradientStart = c },
+                                Triple("Dice Tray Gradient Bottom".t(), DiceTrayGradientEnd) { c: Color -> DiceTrayGradientEnd = c },
+                                Triple("Active Roll Background".t(), ActiveRollBackgroundColor) { c: Color -> ActiveRollBackgroundColor = c },
+                                Triple("Active Roll Content Color".t(), ActiveRollContentColor) { c: Color -> ActiveRollContentColor = c }
                             )
 
                             elementsList.forEachIndexed { index, (label, currentColor, updateFn) ->
@@ -2665,7 +2815,7 @@ fun SettingsDialog(
                                                 Spacer(modifier = Modifier.width(6.dp))
                                                 Icon(
                                                     imageVector = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                                                    contentDescription = "Toggle color picker",
+                                                    contentDescription = "Toggle color picker".t(),
                                                     tint = TextSecondary,
                                                     modifier = Modifier.size(16.dp)
                                                 )
@@ -2711,7 +2861,7 @@ fun SettingsDialog(
                             // UI STYLE THEME SECTION
                             item {
                                 Text(
-                                    text = "UI VISUAL STYLE",
+                                    text = "UI VISUAL STYLE".t(),
                                     color = GoldAccent,
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.Bold,
@@ -2719,7 +2869,7 @@ fun SettingsDialog(
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
-                                    text = "Transform the structural aesthetic of cards, containers, and borders:",
+                                    text = "Transform the structural aesthetic of cards, containers, and borders:".t(),
                                     color = TextSecondary,
                                     fontSize = 11.sp
                                 )
@@ -2728,13 +2878,13 @@ fun SettingsDialog(
 
                             item {
                                 val styles = listOf(
-                                    Triple(UiStyleTheme.CLASSIC_ROUNDED, "Classic Rounded", "Elegant Material curves & subtle shadows"),
-                                    Triple(UiStyleTheme.GLASSMORPHIC, "Glassmorphic", "Translucent glass panels with frosted borders"),
-                                    Triple(UiStyleTheme.NEON_GLOW, "Cyber Glow", "Sharp glowing tech borders & neon sci-fi halo"),
-                                    Triple(UiStyleTheme.FLAT_MINIMAL, "Flat Minimalist", "Stark, crisp flat 2D retro design"),
-                                    Triple(UiStyleTheme.OBSIDIAN_SHARD, "Obsidian Shard", "Hard angled cuts resembling carved stone"),
-                                    Triple(UiStyleTheme.CHUNKY_ARCADE, "Chunky Arcade", "Thick bold borders with heavy drop shadows"),
-                                    Triple(UiStyleTheme.SOFT_ORGANIC, "Soft Organic", "Highly pill-shaped friendly curves")
+                                    Triple(UiStyleTheme.CLASSIC_ROUNDED, "Classic Rounded".t(), "Elegant Material curves & subtle shadows".t()),
+                                    Triple(UiStyleTheme.GLASSMORPHIC, "Glassmorphic".t(), "Translucent glass panels with frosted borders".t()),
+                                    Triple(UiStyleTheme.NEON_GLOW, "Cyber Glow", "Sharp glowing tech borders & neon sci-fi halo".t()),
+                                    Triple(UiStyleTheme.FLAT_MINIMAL, "Flat Minimalist".t(), "Stark, crisp flat 2D retro design".t()),
+                                    Triple(UiStyleTheme.OBSIDIAN_SHARD, "Obsidian Shard".t(), "Hard angled cuts resembling carved stone".t()),
+                                    Triple(UiStyleTheme.CHUNKY_ARCADE, "Chunky Arcade".t(), "Thick bold borders with heavy drop shadows".t()),
+                                    Triple(UiStyleTheme.SOFT_ORGANIC, "Soft Organic".t(), "Highly pill-shaped friendly curves".t())
                                 )
 
                                 Column(
@@ -2797,7 +2947,7 @@ fun SettingsDialog(
 
                             item {
                                 Text(
-                                    text = "BUTTON STYLE AESTHETIC",
+                                    text = "BUTTON STYLE AESTHETIC".t(),
                                     color = GoldAccent,
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.Bold,
@@ -2805,7 +2955,7 @@ fun SettingsDialog(
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
-                                    text = "Choose the shape and curvature of all action buttons:",
+                                    text = "Choose the shape and curvature of all action buttons:".t(),
                                     color = TextSecondary,
                                     fontSize = 11.sp
                                 )
@@ -2814,10 +2964,10 @@ fun SettingsDialog(
                             
                             item {
                                 val buttonStyles = listOf(
-                                    Triple(ButtonStyleTheme.PILL, "Pill Shaped", "Fully rounded soft edges"),
-                                    Triple(ButtonStyleTheme.ROUNDED, "Rounded Corner", "Standard subtle rounded corners"),
-                                    Triple(ButtonStyleTheme.SHARP, "Sharp Rectangle", "Hard 90-degree corners"),
-                                    Triple(ButtonStyleTheme.CUT_CORNER, "Cut Corners", "Sci-fi chamfered edges")
+                                    Triple(ButtonStyleTheme.PILL, "Pill Shaped".t(), "Fully rounded soft edges".t()),
+                                    Triple(ButtonStyleTheme.ROUNDED, "Rounded Corner".t(), "Standard subtle rounded corners".t()),
+                                    Triple(ButtonStyleTheme.SHARP, "Sharp Rectangle".t(), "Hard 90-degree corners".t()),
+                                    Triple(ButtonStyleTheme.CUT_CORNER, "Cut Corners".t(), "Sci-fi chamfered edges".t())
                                 )
 
                                 Column(
@@ -2881,7 +3031,7 @@ fun SettingsDialog(
                             // STANDARD FUNCTIONAL SETTINGS
                             item {
                                 Text(
-                                    text = "USER PREFERENCES",
+                                    text = "USER PREFERENCES".t(),
                                     color = GoldAccent,
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.Bold,
@@ -2889,7 +3039,7 @@ fun SettingsDialog(
                                 )
                                 Spacer(modifier = Modifier.height(2.dp))
                                 Text(
-                                    text = "Toggle game mechanisms and haptics for custom rolling suspense:",
+                                    text = "Toggle game mechanisms and haptics for custom rolling suspense:".t(),
                                     color = TextSecondary,
                                     fontSize = 11.sp
                                 )
@@ -2925,13 +3075,13 @@ fun SettingsDialog(
                                             Spacer(modifier = Modifier.width(12.dp))
                                             Column {
                                                 Text(
-                                                    text = "Dice Rolling Delay",
+                                                    text = "Dice Rolling Delay".t(),
                                                     color = TextPrimary,
                                                     fontSize = 13.sp,
                                                     fontWeight = FontWeight.SemiBold
                                                 )
                                                 Text(
-                                                    text = "Play 600ms roll delay for suspense",
+                                                    text = "Play 600ms roll delay for suspense".t(),
                                                     color = TextSecondary,
                                                     fontSize = 10.sp
                                                 )
@@ -2981,13 +3131,13 @@ fun SettingsDialog(
                                             Spacer(modifier = Modifier.width(12.dp))
                                             Column {
                                                 Text(
-                                                    text = "Rolling Sound Effects",
+                                                    text = "Rolling Sound Effects".t(),
                                                     color = TextPrimary,
                                                     fontSize = 13.sp,
                                                     fontWeight = FontWeight.SemiBold
                                                 )
                                                 Text(
-                                                    text = "Play fantasy sound effects when rolling",
+                                                    text = "Play fantasy sound effects when rolling".t(),
                                                     color = TextSecondary,
                                                     fontSize = 10.sp
                                                 )
@@ -3037,13 +3187,13 @@ fun SettingsDialog(
                                             Spacer(modifier = Modifier.width(12.dp))
                                             Column {
                                                 Text(
-                                                    text = "Haptic Vibration",
+                                                    text = "Haptic Vibration".t(),
                                                     color = TextPrimary,
                                                     fontSize = 13.sp,
                                                     fontWeight = FontWeight.SemiBold
                                                 )
                                                 Text(
-                                                    text = "Vibrate device when dice stop rolling",
+                                                    text = "Vibrate device when dice stop rolling".t(),
                                                     color = TextSecondary,
                                                     fontSize = 10.sp
                                                 )
@@ -3075,16 +3225,78 @@ fun SettingsDialog(
                                 ) {
                                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                         Text(
-                                            text = "Legendary Colorizer",
+                                            text = "Legendary Colorizer".t(),
                                             color = GoldAccent,
                                             fontSize = 12.sp,
                                             fontWeight = FontWeight.Bold
                                         )
                                         Text(
-                                            text = "v1.3.0 • Unleash Your Aesthetic",
+                                            text = "v1.3.0 • Unleash Your Aesthetic".t(),
                                             color = TextSecondary,
                                             fontSize = 10.sp
                                         )
+                                    }
+                                }
+                            }
+                        }
+                        3 -> {
+                            // LANGUAGE SECTION
+                            item {
+                                Text(
+                                    text = "LANGUAGE".t(),
+                                    color = GoldAccent,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    letterSpacing = 1.sp
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Select your preferred app language:".t(),
+                                    color = TextSecondary,
+                                    fontSize = 11.sp
+                                )
+                                Spacer(modifier = Modifier.height(10.dp))
+                            }
+                            
+                            val languages = listOf("English", "Français")
+                            items(languages) { lang ->
+                                val isSelected = currentLanguage == lang
+                                Card(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 4.dp)
+                                        .clickable { currentLanguage = lang }
+                                        .border(
+                                            width = if (isSelected) 2.dp else 1.dp,
+                                            color = if (isSelected) GoldAccent else Color(0xFF49454F).copy(alpha = 0.5f),
+                                            shape = RoundedCornerShape(12.dp)
+                                        ),
+                                    colors = CardDefaults.cardColors(
+                                        containerColor = if (isSelected) GoldAccent.copy(alpha = 0.1f) else DarkCardBg
+                                    ),
+                                    shape = RoundedCornerShape(12.dp)
+                                ) {
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(14.dp),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(
+                                            text = lang.t(),
+                                            color = if (isSelected) GoldAccent else TextPrimary,
+                                            fontSize = 14.sp,
+                                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                                        )
+                                        if (isSelected) {
+                                            Icon(
+                                                imageVector = Icons.Default.Check,
+                                                contentDescription = "Selected".t(),
+                                                tint = GoldAccent,
+                                                modifier = Modifier.size(20.dp)
+                                            )
+                                        }
                                     }
                                 }
                             }
@@ -3105,7 +3317,7 @@ fun SettingsDialog(
                         contentColor = Color.White
                     ),
                 ) {
-                    Text(text = "Close Settings", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                    Text(text = "Close Settings".t(), fontWeight = FontWeight.Bold, fontSize = 14.sp)
                 }
             }
         }
@@ -3116,10 +3328,10 @@ fun SettingsDialog(
     if (showSavePresetDialog) {
         androidx.compose.material3.AlertDialog(
             onDismissRequest = { showSavePresetDialog = false },
-            title = { Text("Save Custom Preset", color = TextPrimary) },
+            title = { Text("Save Custom Preset".t(), color = TextPrimary) },
             text = {
                 Column {
-                    Text("Enter a name for your custom preset style:", color = TextSecondary, fontSize = 14.sp)
+                    Text("Enter a name for your custom preset style:".t(), color = TextSecondary, fontSize = 14.sp)
                     Spacer(modifier = Modifier.height(10.dp))
                     OutlinedTextField(
                         value = newPresetName,
@@ -3132,14 +3344,14 @@ fun SettingsDialog(
                             focusedBorderColor = GoldAccent,
                             unfocusedBorderColor = Color(0xFF49454F).copy(alpha = 0.5f)
                         ),
-                        placeholder = { Text("My Custom Style", color = TextSecondary.copy(alpha = 0.5f)) }
+                        placeholder = { Text("My Custom Style".t(), color = TextSecondary.copy(alpha = 0.5f)) }
                     )
                 }
             },
             containerColor = DarkCardBg,
             dismissButton = {
                 TextButton(onClick = { showSavePresetDialog = false }, shape = getButtonShape()) {
-                    Text("Cancel", color = TextSecondary)
+                    Text("Cancel".t(), color = TextSecondary)
                 }
             },
             confirmButton = {
@@ -3184,7 +3396,7 @@ fun SettingsDialog(
                         showSavePresetDialog = false
                     }
                 ) {
-                    Text("Save", fontWeight = FontWeight.Bold)
+                    Text("Save".t(), fontWeight = FontWeight.Bold)
                 }
             }
         )
