@@ -40,6 +40,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.data.model.DiceSet
@@ -48,14 +51,55 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 // Styling Color Tokens
-val DarkSlateBg = Color(0xFF1C1B1F) // Sophisticated Dark Bg
-val DarkCardBg = Color(0xFF2B2930)  // Sophisticated Dark Surface/Card
-val GoldAccent = Color(0xFFD0BCFF)  // Sophisticated Dark Pastel Violet Accent
-val DarkGoldAccent = Color(0xFF4F378B) // Sophisticated Dark Container Purple
-val AmberGlow = Color(0xFFE8DEF8)   // Sophisticated Dark Secondary Accent Lavender
-val CrimsonAccent = Color(0xFFF2B8B5) // Sophisticated Dark Coral Red
-val TextPrimary = Color(0xFFE6E1E5)   // Sophisticated Dark Primary Text
-val TextSecondary = Color(0xFFCAC4D0) // Sophisticated Dark Secondary Text
+var DarkSlateBg by mutableStateOf(Color(0xFF1C1B1F)) // Sophisticated Dark Bg
+var DarkCardBg by mutableStateOf(Color(0xFF2B2930))  // Sophisticated Dark Surface/Card
+var GoldAccent by mutableStateOf(Color(0xFFD0BCFF))  // Sophisticated Dark Pastel Violet Accent
+var DarkGoldAccent by mutableStateOf(Color(0xFF4F378B)) // Sophisticated Dark Container Purple
+var AmberGlow by mutableStateOf(Color(0xFFE8DEF8))   // Sophisticated Dark Secondary Accent Lavender
+var CrimsonAccent by mutableStateOf(Color(0xFFF2B8B5)) // Sophisticated Dark Coral Red
+var TextPrimary by mutableStateOf(Color(0xFFE6E1E5))   // Sophisticated Dark Primary Text
+var TextSecondary by mutableStateOf(Color(0xFFCAC4D0)) // Sophisticated Dark Secondary Text
+var AdvantageColor by mutableStateOf(Color(0xFF2E7D32)) // Advantage Roll Button
+var DisadvantageColor by mutableStateOf(Color(0xFFC62828)) // Disadvantage Roll Button
+
+enum class UiStyleTheme {
+    CLASSIC_ROUNDED,
+    GLASSMORPHIC,
+    NEON_GLOW,
+    FLAT_MINIMAL
+}
+
+var currentUiStyle by mutableStateOf(UiStyleTheme.CLASSIC_ROUNDED)
+
+@Composable
+fun getCardModifier(shape: androidx.compose.ui.graphics.Shape, elevation: androidx.compose.ui.unit.Dp = 2.dp): Modifier {
+    return when (currentUiStyle) {
+        UiStyleTheme.CLASSIC_ROUNDED -> Modifier.shadow(elevation, shape).border(0.5.dp, Color(0xFF49454F).copy(alpha = 0.3f), shape)
+        UiStyleTheme.GLASSMORPHIC -> Modifier.border(1.dp, Color.White.copy(alpha = 0.15f), shape)
+        UiStyleTheme.NEON_GLOW -> Modifier.border(1.5.dp, GoldAccent, shape).shadow(4.dp, shape, spotColor = GoldAccent, ambientColor = GoldAccent)
+        UiStyleTheme.FLAT_MINIMAL -> Modifier.border(1.5.dp, TextPrimary, shape)
+    }
+}
+
+@Composable
+fun getCardShape(defaultRadius: androidx.compose.ui.unit.Dp = 16.dp): androidx.compose.foundation.shape.CornerBasedShape {
+    return when (currentUiStyle) {
+        UiStyleTheme.CLASSIC_ROUNDED -> androidx.compose.foundation.shape.RoundedCornerShape(defaultRadius)
+        UiStyleTheme.GLASSMORPHIC -> androidx.compose.foundation.shape.RoundedCornerShape(defaultRadius + 4.dp)
+        UiStyleTheme.NEON_GLOW -> androidx.compose.foundation.shape.RoundedCornerShape(8.dp)
+        UiStyleTheme.FLAT_MINIMAL -> androidx.compose.foundation.shape.RoundedCornerShape(0.dp)
+    }
+}
+
+@Composable
+fun getCardContainerColor(baseColor: Color = DarkCardBg): Color {
+    return when (currentUiStyle) {
+        UiStyleTheme.CLASSIC_ROUNDED -> baseColor
+        UiStyleTheme.GLASSMORPHIC -> baseColor.copy(alpha = 0.65f)
+        UiStyleTheme.NEON_GLOW -> baseColor
+        UiStyleTheme.FLAT_MINIMAL -> baseColor
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -320,6 +364,20 @@ fun DiceRollerApp(
             }
         )
     }
+
+    if (showSettingsDialog) {
+        SettingsDialog(
+            onDismiss = { showSettingsDialog = false },
+            enableShakeAnimation = enableShakeAnimation,
+            onShakeAnimationToggled = { enableShakeAnimation = it },
+            enableHapticFeedback = enableHapticFeedback,
+            onHapticFeedbackToggled = { enableHapticFeedback = it },
+            enableSoundEffects = enableSoundEffects,
+            onSoundEffectsToggled = { enableSoundEffects = it },
+            chosenAccentTheme = chosenAccentTheme,
+            onAccentThemeChanged = { chosenAccentTheme = it }
+        )
+    }
 }
 
 @Composable
@@ -508,7 +566,7 @@ fun ActiveRollingTray(
                                 Spacer(modifier = Modifier.width(6.dp))
                                 Card(
                                     colors = CardDefaults.cardColors(
-                                        containerColor = if (rollType == "ADVANTAGE") Color(0xFF2E7D32) else Color(0xFFC62828)
+                                        containerColor = if (rollType == "ADVANTAGE") AdvantageColor else DisadvantageColor
                                     ),
                                     shape = RoundedCornerShape(4.dp),
                                     modifier = Modifier.padding(2.dp)
@@ -683,12 +741,13 @@ fun DiceSetsTab(
             items(diceSets) { set ->
                 var expandedMenu by remember { mutableStateOf(false) }
 
+                val cardShape = getCardShape(16.dp)
                 Card(
-                    colors = CardDefaults.cardColors(containerColor = DarkCardBg),
-                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(containerColor = getCardContainerColor(DarkCardBg)),
+                    shape = cardShape,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .shadow(2.dp, RoundedCornerShape(16.dp))
+                        .then(getCardModifier(cardShape, 2.dp))
                         .testTag("set_card_${set.id}")
                 ) {
                     Column(modifier = Modifier.padding(14.dp)) {
@@ -790,7 +849,7 @@ fun DiceSetsTab(
                                 Button(
                                     onClick = { onRoll(set, "ADVANTAGE") },
                                     colors = ButtonDefaults.buttonColors(
-                                        containerColor = Color(0xFF2E7D32),
+                                        containerColor = AdvantageColor,
                                         contentColor = Color.White
                                     ),
                                     shape = RoundedCornerShape(8.dp),
@@ -830,7 +889,7 @@ fun DiceSetsTab(
                                 Button(
                                     onClick = { onRoll(set, "DISADVANTAGE") },
                                     colors = ButtonDefaults.buttonColors(
-                                        containerColor = Color(0xFFC62828),
+                                        containerColor = DisadvantageColor,
                                         contentColor = Color.White
                                     ),
                                     shape = RoundedCornerShape(8.dp),
@@ -901,10 +960,13 @@ fun QuickRollerTab(
                 Quadruple(100, d100Count, { d100Count += 1 }, { if (d100Count > 0) d100Count -= 1 })
             )
 
+            val diceSelectShape = getCardShape(16.dp)
             Card(
-                colors = CardDefaults.cardColors(containerColor = DarkCardBg),
-                shape = RoundedCornerShape(16.dp),
-                modifier = Modifier.fillMaxWidth()
+                colors = CardDefaults.cardColors(containerColor = getCardContainerColor(DarkCardBg)),
+                shape = diceSelectShape,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .then(getCardModifier(diceSelectShape, 2.dp))
             ) {
                 Column(modifier = Modifier.padding(12.dp)) {
                     diceSelections.chunked(3).forEach { rowItems ->
@@ -995,10 +1057,13 @@ fun QuickRollerTab(
 
         // Quick Modifier Card
         item {
+            val modShape = getCardShape(16.dp)
             Card(
-                colors = CardDefaults.cardColors(containerColor = DarkCardBg),
-                shape = RoundedCornerShape(16.dp),
-                modifier = Modifier.fillMaxWidth()
+                colors = CardDefaults.cardColors(containerColor = getCardContainerColor(DarkCardBg)),
+                shape = modShape,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .then(getCardModifier(modShape, 2.dp))
             ) {
                 Column(modifier = Modifier.padding(14.dp)) {
                     Text(
@@ -1044,10 +1109,13 @@ fun QuickRollerTab(
         // Advantage / Disadvantage for d20 Checkbox if d20 is loaded!
         if (d20Count > 0) {
             item {
+                val rulesShape = getCardShape(16.dp)
                 Card(
-                    colors = CardDefaults.cardColors(containerColor = DarkCardBg),
-                    shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier.fillMaxWidth()
+                    colors = CardDefaults.cardColors(containerColor = getCardContainerColor(DarkCardBg)),
+                    shape = rulesShape,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .then(getCardModifier(rulesShape, 2.dp))
                 ) {
                     Column(modifier = Modifier.padding(14.dp)) {
                         Text(
@@ -1065,8 +1133,8 @@ fun QuickRollerTab(
                             options.forEach { opt ->
                                 val isChosen = selectedRollType == opt
                                 val chosenColor = when (opt) {
-                                    "ADVANTAGE" -> Color(0xFF2E7D32)
-                                    "DISADVANTAGE" -> Color(0xFFC62828)
+                                    "ADVANTAGE" -> AdvantageColor
+                                    "DISADVANTAGE" -> DisadvantageColor
                                     else -> GoldAccent
                                 }
 
@@ -1214,10 +1282,13 @@ fun RollHistoryTab(
                     .fillMaxWidth()
             ) {
                 items(rollLogs) { log ->
+                    val logShape = getCardShape(12.dp)
                     Card(
-                        colors = CardDefaults.cardColors(containerColor = DarkCardBg),
-                        shape = RoundedCornerShape(12.dp),
-                        modifier = Modifier.fillMaxWidth()
+                        colors = CardDefaults.cardColors(containerColor = getCardContainerColor(DarkCardBg)),
+                        shape = logShape,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .then(getCardModifier(logShape, 2.dp))
                     ) {
                         Column(modifier = Modifier.padding(12.dp)) {
                             Row(
@@ -1347,14 +1418,14 @@ fun DiceSetDialog(
     val hasAnyDice = (d4Count + d6Count + d8Count + d10Count + d12Count + d20Count + d100Count) > 0
 
     Dialog(onDismissRequest = onDismiss) {
+        val dialogShape = getCardShape(20.dp)
         Card(
-            colors = CardDefaults.cardColors(containerColor = DarkCardBg),
-            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(containerColor = getCardContainerColor(DarkCardBg)),
+            shape = dialogShape,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 16.dp)
-                .shadow(12.dp, RoundedCornerShape(20.dp))
-                .border(1.dp, Color(0xFF3C3C46), RoundedCornerShape(20.dp))
+                .then(getCardModifier(dialogShape, 12.dp))
         ) {
             LazyColumn(
                 modifier = Modifier
@@ -1839,6 +1910,258 @@ fun DiceShape(sides: Int, value: Int, color: Color, modifier: Modifier = Modifie
     }
 }
 
+private fun hsvToColor(hue: Float, saturation: Float, value: Float): Color {
+    val h = hue / 60f
+    val c = value * saturation
+    val x = c * (1f - kotlin.math.abs((h % 2f) - 1f))
+    val m = value - c
+
+    val (r, g, b) = when {
+        h < 1f -> Triple(c, x, 0f)
+        h < 2f -> Triple(x, c, 0f)
+        h < 3f -> Triple(0f, c, x)
+        h < 4f -> Triple(0f, x, c)
+        h < 5f -> Triple(x, 0f, c)
+        h <= 6f -> Triple(c, 0f, x)
+        else -> Triple(0f, 0f, 0f)
+    }
+    return Color(
+        red = (r + m).coerceIn(0f, 1f),
+        green = (g + m).coerceIn(0f, 1f),
+        blue = (b + m).coerceIn(0f, 1f),
+        alpha = 1f
+    )
+}
+
+private fun colorToHsv(color: Color): Triple<Float, Float, Float> {
+    val r = color.red
+    val g = color.green
+    val b = color.blue
+
+    val max = maxOf(r, g, b)
+    val min = minOf(r, g, b)
+    val delta = max - min
+
+    val h = when {
+        delta == 0f -> 0f
+        max == r -> ((g - b) / delta % 6f) * 60f
+        max == g -> ((b - r) / delta + 2f) * 60f
+        else -> ((r - g) / delta + 4f) * 60f
+    }
+    val hue = if (h < 0) h + 360f else h
+    val s = if (max == 0f) 0f else delta / max
+    val v = max
+
+    return Triple(hue, s, v)
+}
+
+@Composable
+private fun PremiumColorPicker(
+    currentColor: Color,
+    onColorSelected: (Color) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val (initialHue, initialSat, initialVal) = remember(currentColor) { colorToHsv(currentColor) }
+    
+    var hue by remember(initialHue) { mutableStateOf(initialHue) }
+    var saturation by remember(initialSat) { mutableStateOf(initialSat) }
+    var value by remember(initialVal) { mutableStateOf(initialVal) }
+
+    var hexInput by remember(currentColor) {
+        val hex = "%02X%02X%02X".format(
+            (currentColor.red * 255).toInt(),
+            (currentColor.green * 255).toInt(),
+            (currentColor.blue * 255).toInt()
+        )
+        mutableStateOf(hex)
+    }
+
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(top = 8.dp, bottom = 4.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        // Rainbow Hue Slider track background
+        val hueTrackBrush = Brush.horizontalGradient(
+            listOf(
+                Color.Red, Color.Yellow, Color.Green, Color.Cyan, Color.Blue, Color.Magenta, Color.Red
+            )
+        )
+        
+        // Saturation track background (from white to fully saturated color at current hue)
+        val satTrackBrush = remember(hue, value) {
+            Brush.horizontalGradient(
+                listOf(Color.White, hsvToColor(hue, 1.0f, value))
+            )
+        }
+        
+        // Value track background (from black to fully bright color at current hue/sat)
+        val valTrackBrush = remember(hue, saturation) {
+            Brush.horizontalGradient(
+                listOf(Color.Black, hsvToColor(hue, saturation, 1.0f))
+            )
+        }
+
+        // --- HUE CONTROL ---
+        Column {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text("Hue", color = TextSecondary, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                Text("${hue.toInt()}°", color = GoldAccent, fontSize = 11.sp, fontFamily = FontFamily.Monospace)
+            }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(10.dp)
+                    .clip(RoundedCornerShape(5.dp))
+                    .background(hueTrackBrush)
+            )
+            Slider(
+                value = hue,
+                onValueChange = {
+                    hue = it
+                    onColorSelected(hsvToColor(hue, saturation, value))
+                },
+                valueRange = 0f..360f,
+                colors = SliderDefaults.colors(
+                    thumbColor = Color.White,
+                    activeTrackColor = Color.Transparent,
+                    inactiveTrackColor = Color.Transparent
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(24.dp)
+                    .offset(y = (-7).dp)
+            )
+        }
+
+        // --- SATURATION CONTROL ---
+        Column(modifier = Modifier.offset(y = (-8).dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text("Saturation", color = TextSecondary, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                Text("${(saturation * 100).toInt()}%", color = GoldAccent, fontSize = 11.sp, fontFamily = FontFamily.Monospace)
+            }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(10.dp)
+                    .clip(RoundedCornerShape(5.dp))
+                    .background(satTrackBrush)
+            )
+            Slider(
+                value = saturation,
+                onValueChange = {
+                    saturation = it
+                    onColorSelected(hsvToColor(hue, saturation, value))
+                },
+                valueRange = 0f..1f,
+                colors = SliderDefaults.colors(
+                    thumbColor = Color.White,
+                    activeTrackColor = Color.Transparent,
+                    inactiveTrackColor = Color.Transparent
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(24.dp)
+                    .offset(y = (-7).dp)
+            )
+        }
+
+        // --- VALUE/BRIGHTNESS CONTROL ---
+        Column(modifier = Modifier.offset(y = (-16).dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text("Brightness", color = TextSecondary, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                Text("${(value * 100).toInt()}%", color = GoldAccent, fontSize = 11.sp, fontFamily = FontFamily.Monospace)
+            }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(10.dp)
+                    .clip(RoundedCornerShape(5.dp))
+                    .background(valTrackBrush)
+            )
+            Slider(
+                value = value,
+                onValueChange = {
+                    value = it
+                    onColorSelected(hsvToColor(hue, saturation, value))
+                },
+                valueRange = 0f..1f,
+                colors = SliderDefaults.colors(
+                    thumbColor = Color.White,
+                    activeTrackColor = Color.Transparent,
+                    inactiveTrackColor = Color.Transparent
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(24.dp)
+                    .offset(y = (-7).dp)
+            )
+        }
+
+        // --- HEX TEXT INPUT ---
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .offset(y = (-20).dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text("Hex Code:", color = TextSecondary, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+            BasicTextField(
+                value = hexInput,
+                onValueChange = { newValue ->
+                    val clean = newValue.uppercase().filter { it in "0123456789ABCDEF" }.take(6)
+                    hexInput = clean
+                    if (clean.length == 6) {
+                        try {
+                            val r = clean.substring(0, 2).toInt(16) / 255f
+                            val g = clean.substring(2, 4).toInt(16) / 255f
+                            val b = clean.substring(4, 6).toInt(16) / 255f
+                            onColorSelected(Color(r, g, b))
+                        } catch (e: Exception) {
+                            // ignore
+                        }
+                    }
+                },
+                textStyle = TextStyle(color = TextPrimary, fontSize = 12.sp, fontFamily = FontFamily.Monospace),
+                cursorBrush = SolidColor(GoldAccent),
+                modifier = Modifier
+                    .background(DarkSlateBg, RoundedCornerShape(4.dp))
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                    .width(80.dp)
+                    .border(0.5.dp, GoldAccent.copy(alpha = 0.5f), RoundedCornerShape(4.dp)),
+                singleLine = true
+            )
+        }
+    }
+}
+
+private data class ThemePreset(
+    val name: String,
+    val description: String,
+    val bg: Color,
+    val cardBg: Color,
+    val accent: Color,
+    val darkAccent: Color,
+    val secondaryAccent: Color,
+    val errorAccent: Color,
+    val textPrimary: Color,
+    val textSecondary: Color
+)
+
 @Composable
 fun SettingsDialog(
     onDismiss: () -> Unit,
@@ -1851,24 +2174,208 @@ fun SettingsDialog(
     chosenAccentTheme: String,
     onAccentThemeChanged: (String) -> Unit
 ) {
+    val presets = listOf(
+        ThemePreset(
+            name = "Stark Monochrome",
+            description = "High contrast ink & white",
+            bg = Color(0xFFFFFFFF),
+            cardBg = Color(0xFFF3F4F6),
+            accent = Color(0xFF111827),
+            darkAccent = Color(0xFF374151),
+            secondaryAccent = Color(0xFF4B5563),
+            errorAccent = Color(0xFFDC2626),
+            textPrimary = Color(0xFF111827),
+            textSecondary = Color(0xFF4B5563)
+        ),
+        ThemePreset(
+            name = "Obsidian Violet",
+            description = "Muted cosmic dark",
+            bg = Color(0xFF1C1B1F),
+            cardBg = Color(0xFF2B2930),
+            accent = Color(0xFFD0BCFF),
+            darkAccent = Color(0xFF4F378B),
+            secondaryAccent = Color(0xFFE8DEF8),
+            errorAccent = Color(0xFFF2B8B5),
+            textPrimary = Color(0xFFE6E1E5),
+            textSecondary = Color(0xFFCAC4D0)
+        ),
+        ThemePreset(
+            name = "Gilded Amber",
+            description = "Classic RPG gold",
+            bg = Color(0xFF121214),
+            cardBg = Color(0xFF1E1E22),
+            accent = Color(0xFFFFB300),
+            darkAccent = Color(0xFFC59B27),
+            secondaryAccent = Color(0xFFFFD54F),
+            errorAccent = Color(0xFFD32F2F),
+            textPrimary = Color(0xFFF5F5F7),
+            textSecondary = Color(0xFF9E9E9E)
+        ),
+        ThemePreset(
+            name = "Emerald Grove",
+            description = "Nature druid green",
+            bg = Color(0xFF0B140D),
+            cardBg = Color(0xFF152619),
+            accent = Color(0xFF81C784),
+            darkAccent = Color(0xFF2E7D32),
+            secondaryAccent = Color(0xFFC8E6C9),
+            errorAccent = Color(0xFFE57373),
+            textPrimary = Color(0xFFE8F5E9),
+            textSecondary = Color(0xFFA5D6A7)
+        ),
+        ThemePreset(
+            name = "Mage Cyan",
+            description = "Glowing mana theme",
+            bg = Color(0xFF0A1118),
+            cardBg = Color(0xFF121F2B),
+            accent = Color(0xFF4DD0E1),
+            darkAccent = Color(0xFF00838F),
+            secondaryAccent = Color(0xFFB2EBF2),
+            errorAccent = Color(0xFFFF8A80),
+            textPrimary = Color(0xFFE0F7FA),
+            textSecondary = Color(0xFF80DEEA)
+        ),
+        ThemePreset(
+            name = "Crimson Keep",
+            description = "Warlord combat red",
+            bg = Color(0xFF1A0A0A),
+            cardBg = Color(0xFF2D1212),
+            accent = Color(0xFFFF8A80),
+            darkAccent = Color(0xFFC62828),
+            secondaryAccent = Color(0xFFFFCDD2),
+            errorAccent = Color(0xFFEF5350),
+            textPrimary = Color(0xFFFFEBEE),
+            textSecondary = Color(0xFFEF9A9A)
+        ),
+        ThemePreset(
+            name = "Cyberpunk Neon",
+            description = "Vaporwave synth-wave",
+            bg = Color(0xFF0D021A),
+            cardBg = Color(0xFF1F0B3D),
+            accent = Color(0xFFFF007F),
+            darkAccent = Color(0xFF7B009A),
+            secondaryAccent = Color(0xFF00F0FF),
+            errorAccent = Color(0xFFFF0055),
+            textPrimary = Color(0xFFFDF6FF),
+            textSecondary = Color(0xFFB9A2D8)
+        ),
+        ThemePreset(
+            name = "Solar Flare",
+            description = "Vibrant starburst",
+            bg = Color(0xFF1A1105),
+            cardBg = Color(0xFF2E1C0A),
+            accent = Color(0xFFFF6F00),
+            darkAccent = Color(0xFFD84315),
+            secondaryAccent = Color(0xFFFFB74D),
+            errorAccent = Color(0xFFFF5252),
+            textPrimary = Color(0xFFFFF3E0),
+            textSecondary = Color(0xFFFFCC80)
+        ),
+        ThemePreset(
+            name = "Royal Sapphire",
+            description = "Paladin cosmic crest",
+            bg = Color(0xFF0A122C),
+            cardBg = Color(0xFF15224F),
+            accent = Color(0xFF3F51B5),
+            darkAccent = Color(0xFF1A237E),
+            secondaryAccent = Color(0xFFFFD700),
+            errorAccent = Color(0xFFFF1744),
+            textPrimary = Color(0xFFE8EAF6),
+            textSecondary = Color(0xFF9FA8DA)
+        ),
+        ThemePreset(
+            name = "Forest Ranger",
+            description = "Wild autumn wood",
+            bg = Color(0xFF1B2E1A),
+            cardBg = Color(0xFF2C452A),
+            accent = Color(0xFFD4A373),
+            darkAccent = Color(0xFFA27B5C),
+            secondaryAccent = Color(0xFFE9EDC6),
+            errorAccent = Color(0xFFE07A5F),
+            textPrimary = Color(0xFFF4F1DE),
+            textSecondary = Color(0xFFE0E0E0)
+        ),
+        ThemePreset(
+            name = "Sunset Rose",
+            description = "Twilight serenity",
+            bg = Color(0xFF24141E),
+            cardBg = Color(0xFF3B1E2F),
+            accent = Color(0xFFFF7096),
+            darkAccent = Color(0xFF8F2D56),
+            secondaryAccent = Color(0xFFFFB5A7),
+            errorAccent = Color(0xFFE05780),
+            textPrimary = Color(0xFFFFF0F5),
+            textSecondary = Color(0xFFF3C6D3)
+        ),
+        ThemePreset(
+            name = "Frostbite d20",
+            description = "Tundra north wind",
+            bg = Color(0xFFF0F4F8),
+            cardBg = Color(0xFFD9E2EC),
+            accent = Color(0xFF102A43),
+            darkAccent = Color(0xFF334E68),
+            secondaryAccent = Color(0xFF486581),
+            errorAccent = Color(0xFFD32F2F),
+            textPrimary = Color(0xFF102A43),
+            textSecondary = Color(0xFF486581)
+        )
+    )
+
+    val colorOptions = listOf(
+        Color(0xFFFFFFFF) to "Pure White",
+        Color(0xFF121212) to "Ink Black",
+        Color(0xFF1C1B1F) to "Obsidian Black",
+        Color(0xFF121214) to "Midnight Pitch",
+        Color(0xFF0B140D) to "Deep Forest",
+        Color(0xFF0A1118) to "Abyssal Blue",
+        Color(0xFF1A0A0A) to "Blood Crimson",
+        Color(0xFF2B2930) to "Slate Graphite",
+        Color(0xFF1E1E22) to "Dungeon Grey",
+        Color(0xFFD0BCFF) to "Pastel Violet",
+        Color(0xFFFFB300) to "Gold Ore",
+        Color(0xFF81C784) to "Elf Green",
+        Color(0xFF4DD0E1) to "Mana Cyan",
+        Color(0xFFFF8A80) to "Rage Coral",
+        Color(0xFFF2B8B5) to "Soft Red",
+        Color(0xFFE8DEF8) to "Lavender Mist",
+        Color(0xFFCAC4D0) to "Silver Shield",
+        Color(0xFFE6E1E5) to "Ivory Silk",
+        Color(0xFF4F378B) to "Royal Purple",
+        Color(0xFFC59B27) to "Burnished Bronze",
+        Color(0xFF2E7D32) to "Earth Green",
+        Color(0xFF00838F) to "Deep Ocean",
+        Color(0xFFC62828) to "Vampire Crimson",
+        Color(0xFFE0F7FA) to "Ice Diamond",
+        Color(0xFFFF5722) to "Deep Orange",
+        Color(0xFF9C27B0) to "Classic Purple",
+        Color(0xFF00BCD4) to "Teal Accent"
+    )
+
+    var expandedElementIndex by remember { mutableStateOf<Int?>(null) }
+    var selectedTabIndex by remember { mutableStateOf(0) } // 0: Presets, 1: Custom colors, 2: Preferences
+
     Dialog(onDismissRequest = onDismiss) {
+        val settingsShape = getCardShape(24.dp)
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
-                .shadow(12.dp, RoundedCornerShape(24.dp))
-                .border(1.dp, Color(0xFF49454F).copy(alpha = 0.5f), RoundedCornerShape(24.dp)),
-            colors = CardDefaults.cardColors(containerColor = DarkCardBg),
-            shape = RoundedCornerShape(24.dp)
+                .fillMaxHeight(0.85f)
+                .padding(8.dp)
+                .then(getCardModifier(settingsShape, 12.dp)),
+            colors = CardDefaults.cardColors(containerColor = getCardContainerColor(DarkCardBg)),
+            shape = settingsShape
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(24.dp)
+                    .fillMaxSize()
+                    .padding(18.dp)
             ) {
+                // Header (non-scrollable)
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 12.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Settings,
@@ -1878,145 +2385,590 @@ fun SettingsDialog(
                     )
                     Spacer(modifier = Modifier.width(10.dp))
                     Text(
-                        text = "App Settings",
+                        text = "Customize App Themes",
                         color = TextPrimary,
-                        fontSize = 20.sp,
+                        fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
                     )
                 }
 
-                Spacer(modifier = Modifier.height(20.dp))
+                HorizontalDivider(color = Color(0xFF49454F).copy(alpha = 0.3f), modifier = Modifier.padding(bottom = 12.dp))
 
-                // Setting 1: Roll Delay & Shake Animation
+                // Custom Material Segmented Tab Option Picker
+                val tabs = listOf(
+                    Triple("🎨 Presets", 0, Icons.Default.Casino),
+                    Triple("🔧 Customizer", 1, Icons.Default.Edit),
+                    Triple("⚙️ Preferences", 2, Icons.Default.Settings)
+                )
+
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                        .background(DarkSlateBg.copy(alpha = 0.25f), RoundedCornerShape(12.dp))
+                        .padding(4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = "Dice Rolling Delay",
-                            color = TextPrimary,
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                        Text(
-                            text = "Play 600ms roll/shake delay for suspense",
-                            color = TextSecondary,
-                            fontSize = 11.sp
-                        )
-                    }
-                    Switch(
-                        checked = enableShakeAnimation,
-                        onCheckedChange = onShakeAnimationToggled,
-                        colors = SwitchDefaults.colors(
-                            checkedThumbColor = DarkSlateBg,
-                            checkedTrackColor = GoldAccent,
-                            uncheckedThumbColor = TextSecondary,
-                            uncheckedTrackColor = DarkSlateBg
-                        )
-                    )
-                }
-
-                HorizontalDivider(color = Color(0xFF49454F).copy(alpha = 0.3f), modifier = Modifier.padding(vertical = 8.dp))
-
-                // Setting 2: Sound Effects
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = "Rolling Sound Effects",
-                            color = TextPrimary,
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                        Text(
-                            text = "Play fantasy sound effects when rolling",
-                            color = TextSecondary,
-                            fontSize = 11.sp
-                        )
-                    }
-                    Switch(
-                        checked = enableSoundEffects,
-                        onCheckedChange = onSoundEffectsToggled,
-                        colors = SwitchDefaults.colors(
-                            checkedThumbColor = DarkSlateBg,
-                            checkedTrackColor = GoldAccent,
-                            uncheckedThumbColor = TextSecondary,
-                            uncheckedTrackColor = DarkSlateBg
-                        )
-                    )
-                }
-
-                HorizontalDivider(color = Color(0xFF49454F).copy(alpha = 0.3f), modifier = Modifier.padding(vertical = 8.dp))
-
-                // Setting 3: Haptic Feedback
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = "Haptic Vibration",
-                            color = TextPrimary,
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                        Text(
-                            text = "Vibrate device when dice stop rolling",
-                            color = TextSecondary,
-                            fontSize = 11.sp
-                        )
-                    }
-                    Switch(
-                        checked = enableHapticFeedback,
-                        onCheckedChange = onHapticFeedbackToggled,
-                        colors = SwitchDefaults.colors(
-                            checkedThumbColor = DarkSlateBg,
-                            checkedTrackColor = GoldAccent,
-                            uncheckedThumbColor = TextSecondary,
-                            uncheckedTrackColor = DarkSlateBg
-                        )
-                    )
-                }
-
-                HorizontalDivider(color = Color(0xFF49454F).copy(alpha = 0.3f), modifier = Modifier.padding(vertical = 8.dp))
-
-                // App version
-                Spacer(modifier = Modifier.height(12.dp))
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(DarkSlateBg, RoundedCornerShape(12.dp))
-                        .padding(12.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(
-                            text = "Dice Vault — Sophisticated Dark Edition",
-                            color = GoldAccent,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            text = "v1.1.0 • Crafted for Adventurers",
-                            color = TextSecondary,
-                            fontSize = 10.sp
-                        )
+                    tabs.forEach { (title, index, icon) ->
+                        val isSelected = selectedTabIndex == index
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(38.dp)
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(if (isSelected) GoldAccent else Color.Transparent)
+                                .clickable { selectedTabIndex = index }
+                                .padding(vertical = 4.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                Icon(
+                                    imageVector = icon,
+                                    contentDescription = null,
+                                    tint = if (isSelected) DarkSlateBg else TextSecondary,
+                                    modifier = Modifier.size(14.dp)
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = title.substring(2), // Skip emoji for cleaner UI
+                                    color = if (isSelected) DarkSlateBg else TextPrimary,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
                     }
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(14.dp))
+
+                // Scrollable contents
+                LazyColumn(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(14.dp),
+                    contentPadding = PaddingValues(vertical = 4.dp)
+                ) {
+                    when (selectedTabIndex) {
+                        0 -> {
+                            // PRESET THEMES SECTION
+                            item {
+                                Text(
+                                    text = "TAP TO ACTIVATE PRESET",
+                                    color = GoldAccent,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    letterSpacing = 1.sp
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Each theme customizes the layout, buttons, accent glow, and texts:",
+                                    color = TextSecondary,
+                                    fontSize = 11.sp
+                                )
+                            }
+
+                            items(presets) { preset ->
+                                val isSelected = DarkSlateBg == preset.bg && GoldAccent == preset.accent
+                                Card(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clickable {
+                                            DarkSlateBg = preset.bg
+                                            DarkCardBg = preset.cardBg
+                                            GoldAccent = preset.accent
+                                            DarkGoldAccent = preset.darkAccent
+                                            AmberGlow = preset.secondaryAccent
+                                            CrimsonAccent = preset.errorAccent
+                                            TextPrimary = preset.textPrimary
+                                            TextSecondary = preset.textSecondary
+                                        }
+                                        .border(
+                                            width = if (isSelected) 1.5.dp else 0.5.dp,
+                                            color = if (isSelected) GoldAccent else Color(0xFF49454F).copy(alpha = 0.3f),
+                                            shape = RoundedCornerShape(12.dp)
+                                        ),
+                                    colors = CardDefaults.cardColors(
+                                        containerColor = if (isSelected) preset.cardBg else preset.cardBg.copy(alpha = 0.6f)
+                                    ),
+                                    shape = RoundedCornerShape(12.dp)
+                                ) {
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(14.dp),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Column(modifier = Modifier.weight(1f)) {
+                                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                                Text(
+                                                    text = preset.name,
+                                                    color = preset.textPrimary,
+                                                    fontSize = 14.sp,
+                                                    fontWeight = FontWeight.Bold
+                                                )
+                                                if (isSelected) {
+                                                    Spacer(modifier = Modifier.width(6.dp))
+                                                    Box(
+                                                        modifier = Modifier
+                                                            .background(preset.accent.copy(alpha = 0.25f), RoundedCornerShape(4.dp))
+                                                            .padding(horizontal = 6.dp, vertical = 2.dp)
+                                                    ) {
+                                                        Text(
+                                                            text = "Active",
+                                                            color = preset.accent,
+                                                            fontSize = 9.sp,
+                                                            fontWeight = FontWeight.Bold
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                            Text(
+                                                text = preset.description,
+                                                color = preset.textSecondary,
+                                                fontSize = 11.sp,
+                                                modifier = Modifier.padding(top = 2.dp)
+                                            )
+                                        }
+
+                                        // Colors Row Preview
+                                        Row(
+                                            horizontalArrangement = Arrangement.spacedBy(4.dp),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Box(modifier = Modifier.size(16.dp).background(preset.bg, CircleShape).border(0.5.dp, Color.White, CircleShape))
+                                            Box(modifier = Modifier.size(16.dp).background(preset.cardBg, CircleShape).border(0.5.dp, Color.White, CircleShape))
+                                            Box(modifier = Modifier.size(16.dp).background(preset.accent, CircleShape).border(0.5.dp, Color.White, CircleShape))
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        1 -> {
+                            // GRANULAR UI ELEMENT CUSTOMIZER
+                            item {
+                                Text(
+                                    text = "GRANULAR ELEMENT COLORS",
+                                    color = GoldAccent,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    letterSpacing = 1.sp
+                                )
+                                Text(
+                                    text = "Tap any row to open the interactive Color Picker, or use the quick swatches below:",
+                                    color = TextSecondary,
+                                    fontSize = 11.sp,
+                                    modifier = Modifier.padding(top = 2.dp)
+                                )
+                            }
+
+                            val elementsList = listOf(
+                                Triple("App Background", DarkSlateBg) { c: Color -> DarkSlateBg = c },
+                                Triple("Panel / Card Background", DarkCardBg) { c: Color -> DarkCardBg = c },
+                                Triple("Highlight / D20 Accent", GoldAccent) { c: Color -> GoldAccent = c },
+                                Triple("Button Fill / Container Accent", DarkGoldAccent) { c: Color -> DarkGoldAccent = c },
+                                Triple("Secondary highlights", AmberGlow) { c: Color -> AmberGlow = c },
+                                Triple("Rage / Warning Accent", CrimsonAccent) { c: Color -> CrimsonAccent = c },
+                                Triple("Primary Text", TextPrimary) { c: Color -> TextPrimary = c },
+                                Triple("Secondary Text", TextSecondary) { c: Color -> TextSecondary = c },
+                                Triple("Advantage Button Color", AdvantageColor) { c: Color -> AdvantageColor = c },
+                                Triple("Disadvantage Button Color", DisadvantageColor) { c: Color -> DisadvantageColor = c }
+                            )
+
+                            elementsList.forEachIndexed { index, (label, currentColor, updateFn) ->
+                                item {
+                                    val isExpanded = expandedElementIndex == index
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .background(DarkSlateBg.copy(alpha = 0.5f), RoundedCornerShape(12.dp))
+                                            .border(
+                                                width = if (isExpanded) 1.dp else 0.5.dp,
+                                                color = if (isExpanded) GoldAccent else Color(0xFF49454F).copy(alpha = 0.3f),
+                                                shape = RoundedCornerShape(12.dp)
+                                            )
+                                            .clickable {
+                                                expandedElementIndex = if (isExpanded) null else index
+                                            }
+                                            .padding(12.dp)
+                                    ) {
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Text(
+                                                text = label,
+                                                color = TextPrimary,
+                                                fontSize = 13.sp,
+                                                fontWeight = FontWeight.SemiBold
+                                            )
+                                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                                Box(
+                                                    modifier = Modifier
+                                                        .size(20.dp)
+                                                        .background(currentColor, CircleShape)
+                                                        .border(1.dp, TextSecondary, CircleShape)
+                                                )
+                                                Spacer(modifier = Modifier.width(6.dp))
+                                                val hexString = "#%02X%02X%02X".format(
+                                                    (currentColor.red * 255).toInt(),
+                                                    (currentColor.green * 255).toInt(),
+                                                    (currentColor.blue * 255).toInt()
+                                                )
+                                                Text(
+                                                    text = hexString,
+                                                    color = TextSecondary,
+                                                    fontSize = 10.sp,
+                                                    fontFamily = FontFamily.Monospace
+                                                )
+                                                Spacer(modifier = Modifier.width(6.dp))
+                                                Icon(
+                                                    imageVector = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                                                    contentDescription = "Toggle color picker",
+                                                    tint = TextSecondary,
+                                                    modifier = Modifier.size(16.dp)
+                                                )
+                                            }
+                                        }
+
+                                        if (isExpanded) {
+                                            Spacer(modifier = Modifier.height(12.dp))
+                                            HorizontalDivider(color = Color(0xFF49454F).copy(alpha = 0.2f))
+                                            Spacer(modifier = Modifier.height(12.dp))
+                                            PremiumColorPicker(
+                                                currentColor = currentColor,
+                                                onColorSelected = updateFn
+                                            )
+                                        } else {
+                                            Spacer(modifier = Modifier.height(6.dp))
+                                            // Quick swatches inline when collapsed
+                                            androidx.compose.foundation.lazy.LazyRow(
+                                                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                                                contentPadding = PaddingValues(horizontal = 2.dp)
+                                            ) {
+                                                items(colorOptions) { (col, colName) ->
+                                                    val isSwatched = col == currentColor
+                                                    Box(
+                                                        modifier = Modifier
+                                                            .size(22.dp)
+                                                            .background(col, CircleShape)
+                                                            .border(
+                                                                width = if (isSwatched) 1.5.dp else 0.5.dp,
+                                                                color = if (isSwatched) GoldAccent else Color.White.copy(alpha = 0.4f),
+                                                                shape = CircleShape
+                                                            )
+                                                            .clickable { updateFn(col) }
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        2 -> {
+                            // UI STYLE THEME SECTION
+                            item {
+                                Text(
+                                    text = "UI VISUAL STYLE",
+                                    color = GoldAccent,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    letterSpacing = 1.sp
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Transform the structural aesthetic of cards, containers, and borders:",
+                                    color = TextSecondary,
+                                    fontSize = 11.sp
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                            }
+
+                            item {
+                                val styles = listOf(
+                                    Triple(UiStyleTheme.CLASSIC_ROUNDED, "Classic Rounded", "Elegant Material curves & subtle shadows"),
+                                    Triple(UiStyleTheme.GLASSMORPHIC, "Glassmorphic", "Translucent glass panels with frosted borders"),
+                                    Triple(UiStyleTheme.NEON_GLOW, "Cyber Glow", "Sharp glowing tech borders & neon sci-fi halo"),
+                                    Triple(UiStyleTheme.FLAT_MINIMAL, "Flat Minimalist", "Stark, crisp flat 2D retro design")
+                                )
+
+                                Column(
+                                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    styles.forEach { (style, name, desc) ->
+                                        val isSelected = currentUiStyle == style
+                                        val cardShape = RoundedCornerShape(12.dp)
+                                        Card(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .clickable { currentUiStyle = style }
+                                                .border(
+                                                    width = if (isSelected) 1.5.dp else 0.5.dp,
+                                                    color = if (isSelected) GoldAccent else Color(0xFF49454F).copy(alpha = 0.3f),
+                                                    shape = cardShape
+                                                ),
+                                            colors = CardDefaults.cardColors(
+                                                containerColor = if (isSelected) DarkSlateBg.copy(alpha = 0.6f) else DarkSlateBg.copy(alpha = 0.2f)
+                                            ),
+                                            shape = cardShape
+                                        ) {
+                                            Row(
+                                                modifier = Modifier.padding(12.dp),
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                RadioButton(
+                                                    selected = isSelected,
+                                                    onClick = { currentUiStyle = style },
+                                                    colors = RadioButtonDefaults.colors(
+                                                        selectedColor = GoldAccent,
+                                                        unselectedColor = TextSecondary
+                                                    )
+                                                )
+                                                Spacer(modifier = Modifier.width(8.dp))
+                                                Column {
+                                                    Text(
+                                                        text = name,
+                                                        color = TextPrimary,
+                                                        fontSize = 13.sp,
+                                                        fontWeight = FontWeight.Bold
+                                                    )
+                                                    Text(
+                                                        text = desc,
+                                                        color = TextSecondary,
+                                                        fontSize = 10.sp
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            item {
+                                Spacer(modifier = Modifier.height(10.dp))
+                                HorizontalDivider(color = Color(0xFF49454F).copy(alpha = 0.3f))
+                                Spacer(modifier = Modifier.height(10.dp))
+                            }
+
+                            // STANDARD FUNCTIONAL SETTINGS
+                            item {
+                                Text(
+                                    text = "USER PREFERENCES",
+                                    color = GoldAccent,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    letterSpacing = 1.sp
+                                )
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Text(
+                                    text = "Toggle game mechanisms and haptics for custom rolling suspense:",
+                                    color = TextSecondary,
+                                    fontSize = 11.sp
+                                )
+                            }
+
+                            // Setting 1: Roll Delay & Shake Animation
+                            item {
+                                val cardShape = getCardShape(12.dp)
+                                Card(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .then(getCardModifier(cardShape, 1.dp)),
+                                    colors = CardDefaults.cardColors(containerColor = getCardContainerColor(DarkSlateBg.copy(alpha = 0.4f))),
+                                    shape = cardShape
+                                ) {
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(14.dp),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Row(
+                                            modifier = Modifier.weight(1f),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.Refresh,
+                                                contentDescription = null,
+                                                tint = GoldAccent,
+                                                modifier = Modifier.size(20.dp)
+                                            )
+                                            Spacer(modifier = Modifier.width(12.dp))
+                                            Column {
+                                                Text(
+                                                    text = "Dice Rolling Delay",
+                                                    color = TextPrimary,
+                                                    fontSize = 13.sp,
+                                                    fontWeight = FontWeight.SemiBold
+                                                )
+                                                Text(
+                                                    text = "Play 600ms roll delay for suspense",
+                                                    color = TextSecondary,
+                                                    fontSize = 10.sp
+                                                )
+                                            }
+                                        }
+                                        Switch(
+                                            checked = enableShakeAnimation,
+                                            onCheckedChange = onShakeAnimationToggled,
+                                            colors = SwitchDefaults.colors(
+                                                checkedThumbColor = DarkSlateBg,
+                                                checkedTrackColor = GoldAccent,
+                                                uncheckedThumbColor = TextSecondary,
+                                                uncheckedTrackColor = DarkSlateBg.copy(alpha = 0.8f)
+                                            )
+                                        )
+                                    }
+                                }
+                            }
+
+                            // Setting 2: Sound Effects
+                            item {
+                                val cardShape = getCardShape(12.dp)
+                                Card(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .then(getCardModifier(cardShape, 1.dp)),
+                                    colors = CardDefaults.cardColors(containerColor = getCardContainerColor(DarkSlateBg.copy(alpha = 0.4f))),
+                                    shape = cardShape
+                                ) {
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(14.dp),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Row(
+                                            modifier = Modifier.weight(1f),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.PlayArrow,
+                                                contentDescription = null,
+                                                tint = GoldAccent,
+                                                modifier = Modifier.size(20.dp)
+                                            )
+                                            Spacer(modifier = Modifier.width(12.dp))
+                                            Column {
+                                                Text(
+                                                    text = "Rolling Sound Effects",
+                                                    color = TextPrimary,
+                                                    fontSize = 13.sp,
+                                                    fontWeight = FontWeight.SemiBold
+                                                )
+                                                Text(
+                                                    text = "Play fantasy sound effects when rolling",
+                                                    color = TextSecondary,
+                                                    fontSize = 10.sp
+                                                )
+                                            }
+                                        }
+                                        Switch(
+                                            checked = enableSoundEffects,
+                                            onCheckedChange = onSoundEffectsToggled,
+                                            colors = SwitchDefaults.colors(
+                                                checkedThumbColor = DarkSlateBg,
+                                                checkedTrackColor = GoldAccent,
+                                                uncheckedThumbColor = TextSecondary,
+                                                uncheckedTrackColor = DarkSlateBg.copy(alpha = 0.8f)
+                                            )
+                                        )
+                                    }
+                                }
+                            }
+
+                            // Setting 3: Haptic Feedback
+                            item {
+                                val cardShape = getCardShape(12.dp)
+                                Card(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .then(getCardModifier(cardShape, 1.dp)),
+                                    colors = CardDefaults.cardColors(containerColor = getCardContainerColor(DarkSlateBg.copy(alpha = 0.4f))),
+                                    shape = cardShape
+                                ) {
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(14.dp),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Row(
+                                            modifier = Modifier.weight(1f),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.Check,
+                                                contentDescription = null,
+                                                tint = GoldAccent,
+                                                modifier = Modifier.size(20.dp)
+                                            )
+                                            Spacer(modifier = Modifier.width(12.dp))
+                                            Column {
+                                                Text(
+                                                    text = "Haptic Vibration",
+                                                    color = TextPrimary,
+                                                    fontSize = 13.sp,
+                                                    fontWeight = FontWeight.SemiBold
+                                                )
+                                                Text(
+                                                    text = "Vibrate device when dice stop rolling",
+                                                    color = TextSecondary,
+                                                    fontSize = 10.sp
+                                                )
+                                            }
+                                        }
+                                        Switch(
+                                            checked = enableHapticFeedback,
+                                            onCheckedChange = onHapticFeedbackToggled,
+                                            colors = SwitchDefaults.colors(
+                                                checkedThumbColor = DarkSlateBg,
+                                                checkedTrackColor = GoldAccent,
+                                                uncheckedThumbColor = TextSecondary,
+                                                uncheckedTrackColor = DarkSlateBg.copy(alpha = 0.8f)
+                                            )
+                                        )
+                                    }
+                                }
+                            }
+
+                            // Version
+                            item {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .background(DarkSlateBg.copy(alpha = 0.3f), RoundedCornerShape(12.dp))
+                                        .border(0.5.dp, Color(0xFF49454F).copy(alpha = 0.2f), RoundedCornerShape(12.dp))
+                                        .padding(14.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                        Text(
+                                            text = "Dice Vault — Legendary Customizer",
+                                            color = GoldAccent,
+                                            fontSize = 12.sp,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                        Text(
+                                            text = "v1.3.0 • Unleash Your Aesthetic",
+                                            color = TextSecondary,
+                                            fontSize = 10.sp
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(14.dp))
 
                 Button(
                     onClick = onDismiss,
@@ -2029,7 +2981,7 @@ fun SettingsDialog(
                     ),
                     shape = RoundedCornerShape(12.dp)
                 ) {
-                    Text(text = "Close", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                    Text(text = "Close Customizer", fontWeight = FontWeight.Bold, fontSize = 14.sp)
                 }
             }
         }
