@@ -1,0 +1,29 @@
+--- app/src/main/java/com/example/ui/DiceRollerApp.kt
++++ app/src/main/java/com/example/ui/DiceRollerApp.kt
+@@ -496,11 +496,8 @@
+                         modifier = Modifier
+                             .size(96.dp)
+                             .rotate(rotationAngle)
+                             .background(
+-                                brush = Brush.linearGradient(
+-                                    colors = listOf(ActiveRollGradientStart, ActiveRollGradientEnd)
+-                                ),
+-                                shape = innerShape
++                                color = ActiveRollBackgroundColor, shape = innerShape
+                             )
+                             .border(1.2.dp, DiceRollAnimationColor, innerShape),
+                         contentAlignment = Alignment.Center
+@@ -578,11 +575,8 @@
+                     Box(
+                         modifier = Modifier
+                             .size(96.dp)
+                             .rotate(45f)
+                             .background(
+-                                brush = Brush.linearGradient(
+-                                    colors = listOf(ActiveRollGradientStart, ActiveRollGradientEnd)
+-                                ),
+-                                shape = innerShape
++                                color = ActiveRollBackgroundColor, shape = innerShape
+                             )
+                             .border(1.2.dp, DiceRollResultColor, innerShape),
+                         contentAlignment = Alignment.Center

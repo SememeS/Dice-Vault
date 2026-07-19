@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<body>
+<svg width="200" height="200" viewBox="0 0 200 200">
+  <!-- JavaScript to generate it -->
+</svg>
+<script>
+  let svg = document.querySelector('svg');
+  let centerX = 100, centerY = 100, radius = 90, innerRadius = 45;
+  
+  // Outer
+  let pointsOuter = [];
+  for (let i=0; i<5; i++) {
+    let angle = (i * 72 - 90) * Math.PI / 180;
+    pointsOuter.push(`${centerX + radius * Math.cos(angle)},${centerY + radius * Math.sin(angle)}`);
+  }
+  svg.innerHTML += `<polygon points="${pointsOuter.join(' ')}" fill="none" stroke="black" stroke-width="2"/>`;
+
+  // Inner
+  let pointsInner = [];
+  for (let i=0; i<5; i++) {
+    let angle = (i * 72 - 90 + 36) * Math.PI / 180;
+    pointsInner.push({x: centerX + innerRadius * Math.cos(angle), y: centerY + innerRadius * Math.sin(angle)});
+  }
+  let innerPoly = pointsInner.map(p => `${p.x},${p.y}`).join(' ');
+  svg.innerHTML += `<polygon points="${innerPoly}" fill="none" stroke="black" stroke-width="2"/>`;
+
+  // Connections
+  for (let i=0; i<5; i++) {
+    let inner = pointsInner[i];
+    let outer1Angle = (i * 72 - 90) * Math.PI / 180;
+    let outer2Angle = (((i + 1) % 5) * 72 - 90) * Math.PI / 180;
+    
+    let outer1 = {x: centerX + radius * Math.cos(outer1Angle), y: centerY + radius * Math.sin(outer1Angle)};
+    let outer2 = {x: centerX + radius * Math.cos(outer2Angle), y: centerY + radius * Math.sin(outer2Angle)};
+    
+    svg.innerHTML += `<line x1="${inner.x}" y1="${inner.y}" x2="${outer1.x}" y2="${outer1.y}" stroke="black" stroke-width="2"/>`;
+    svg.innerHTML += `<line x1="${inner.x}" y1="${inner.y}" x2="${outer2.x}" y2="${outer2.y}" stroke="black" stroke-width="2"/>`;
+  }
+</script>
+</body>
+</html>

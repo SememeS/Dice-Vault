@@ -1,0 +1,24 @@
+--- app/src/main/java/com/example/ui/DiceRollerApp.kt
++++ app/src/main/java/com/example/ui/DiceRollerApp.kt
+@@ -1883,6 +1883,21 @@
+                     drawLine(color, Offset(xInner, yInner), Offset(xOuterPrev, yOuterPrev), strokeWidth = 0.8.dp.toPx())
+                 }
+             }
++            10, 100 -> {
++                val pCenter = Offset(centerX, centerY - radius * 0.2f)
++                val p1 = Offset(centerX - radius * 0.4f, centerY + radius * 0.1f)
++                val p2 = Offset(centerX + radius * 0.4f, centerY + radius * 0.1f)
++                val top = Offset(centerX, centerY - radius)
++                val bottom = Offset(centerX, centerY + radius)
++                val left = Offset(centerX - radius * 0.8f, centerY - radius * 0.1f)
++                val right = Offset(centerX + radius * 0.8f, centerY - radius * 0.1f)
++                drawLine(color, left, p1, strokeWidth = 0.8.dp.toPx())
++                drawLine(color, p1, pCenter, strokeWidth = 0.8.dp.toPx())
++                drawLine(color, pCenter, p2, strokeWidth = 0.8.dp.toPx())
++                drawLine(color, p2, right, strokeWidth = 0.8.dp.toPx())
++                drawLine(color, top, pCenter, strokeWidth = 0.8.dp.toPx())
++                drawLine(color, bottom, p1, strokeWidth = 0.8.dp.toPx())
++                drawLine(color, bottom, p2, strokeWidth = 0.8.dp.toPx())
++            }
+             12 -> {
+                 val innerPath = Path()

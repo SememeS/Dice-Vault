@@ -72,6 +72,8 @@ var D20Color by mutableStateOf(Color(0xFFD0BCFF)) // d20 color
 var D100Color by mutableStateOf(Color(0xFFF48FB1)) // d100 color
 var DiceTrayGradientStart by mutableStateOf(Color(0xFF2B2930)) // Dice Tray Gradient Start
 var DiceTrayGradientEnd by mutableStateOf(Color(0xFF1D1B20)) // Dice Tray Gradient End
+var ActiveRollBackgroundColor by mutableStateOf(Color(0xFFD0BCFF))
+var ActiveRollContentColor by mutableStateOf(Color(0xFF1C1B1F)) // Active Roll Gradient Start
 
 enum class UiStyleTheme {
     CLASSIC_ROUNDED,
@@ -160,15 +162,7 @@ fun DiceRollerApp(
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = DarkSlateBg,
-        topBar = {
-            CenterAlignedTopAppBar(
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = DarkSlateBg,
-                    titleContentColor = TextPrimary
-                ),
-                title = {}
-            )
-        },
+        contentColor = TextPrimary,
         bottomBar = {
             NavigationBar(
                 containerColor = DarkCardBg,
@@ -243,7 +237,7 @@ fun DiceRollerApp(
                             Icon(
                                 imageVector = Icons.Default.Add,
                                 contentDescription = "Custom Set",
-                                tint = DarkSlateBg,
+                                tint = Color.White,
                                 modifier = Modifier.size(18.dp)
                             )
                         }
@@ -470,6 +464,7 @@ fun ActiveRollingTray(
     )
 
     val trayShape = getCardShape(36.dp)
+    val innerShape = getCardShape(22.dp)
 
     Box(
         modifier = Modifier
@@ -502,12 +497,10 @@ fun ActiveRollingTray(
                             .size(96.dp)
                             .rotate(rotationAngle)
                             .background(
-                                brush = Brush.linearGradient(
-                                    colors = listOf(Color(0xFF4F378B), Color(0xFF381E72))
-                                ),
-                                shape = RoundedCornerShape(22.dp)
+                                color = ActiveRollBackgroundColor,
+                                shape = innerShape
                             )
-                            .border(1.2.dp, DiceRollAnimationColor, RoundedCornerShape(22.dp)),
+                            .border(1.2.dp, ActiveRollContentColor, innerShape),
                         contentAlignment = Alignment.Center
                     ) {
                         Canvas(
@@ -515,7 +508,7 @@ fun ActiveRollingTray(
                                 .size(60.dp)
                                 .rotate(-rotationAngle)
                         ) {
-                            drawD20Wireframe(DiceRollAnimationColor, size.width)
+                            drawD20Wireframe(ActiveRollContentColor, size.width)
                         }
                     }
                     Spacer(modifier = Modifier.height(18.dp))
@@ -585,17 +578,15 @@ fun ActiveRollingTray(
                             .size(96.dp)
                             .rotate(45f)
                             .background(
-                                brush = Brush.linearGradient(
-                                    colors = listOf(Color(0xFF4F378B), Color(0xFF381E72))
-                                ),
-                                shape = RoundedCornerShape(22.dp)
+                                color = ActiveRollBackgroundColor,
+                                shape = innerShape
                             )
-                            .border(1.2.dp, DiceRollResultColor, RoundedCornerShape(22.dp)),
+                            .border(1.2.dp, ActiveRollContentColor, innerShape),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
                             text = total.toString(),
-                            color = DiceRollResultColor,
+                            color = ActiveRollContentColor,
                             fontSize = 42.sp,
                             fontWeight = FontWeight.Light,
                             fontFamily = FontFamily.SansSerif,
@@ -864,7 +855,7 @@ fun DiceSetsTab(
                                 onClick = { onRoll(set, "NORMAL") },
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = GoldAccent,
-                                    contentColor = DarkSlateBg
+                                    contentColor = Color.White
                                 ),
                                 shape = RoundedCornerShape(8.dp),
                                 modifier = Modifier
@@ -1002,7 +993,7 @@ fun QuickRollerTab(
                                             ) {
                                                 Text(
                                                     text = count.toString(),
-                                                    color = DarkSlateBg,
+                                                    color = Color.White,
                                                     fontWeight = FontWeight.Black,
                                                     fontSize = 10.sp
                                                 )
@@ -1203,7 +1194,7 @@ fun QuickRollerTab(
                             if (d20Count > 0) selectedRollType else "NORMAL"
                         )
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = GoldAccent, contentColor = DarkSlateBg),
+                    colors = ButtonDefaults.buttonColors(containerColor = GoldAccent, contentColor = Color.White),
                     shape = RoundedCornerShape(12.dp),
                     modifier = Modifier
                         .weight(1f)
@@ -1676,7 +1667,7 @@ fun DiceSetDialog(
                                     onSave(saved)
                                 }
                             },
-                            colors = ButtonDefaults.buttonColors(containerColor = GoldAccent, contentColor = DarkSlateBg),
+                            colors = ButtonDefaults.buttonColors(containerColor = GoldAccent, contentColor = Color.White),
                             shape = RoundedCornerShape(10.dp),
                             modifier = Modifier
                                 .weight(1.5f)
@@ -1891,6 +1882,24 @@ fun DiceShape(sides: Int, value: Int, color: Color, modifier: Modifier = Modifie
                     drawLine(color, Offset(xInner, yInner), Offset(xOuterPrev, yOuterPrev), strokeWidth = 0.8.dp.toPx())
                 }
             }
+            10, 100 -> {
+                val pCenter = Offset(centerX, centerY - radius * 0.2f)
+                val p1 = Offset(centerX - radius * 0.4f, centerY + radius * 0.1f)
+                val p2 = Offset(centerX + radius * 0.4f, centerY + radius * 0.1f)
+                val top = Offset(centerX, centerY - radius)
+                val bottom = Offset(centerX, centerY + radius)
+                val left = Offset(centerX - radius * 0.8f, centerY - radius * 0.1f)
+                val right = Offset(centerX + radius * 0.8f, centerY - radius * 0.1f)
+                
+                drawLine(color, left, p1, strokeWidth = 0.8.dp.toPx())
+                drawLine(color, p1, pCenter, strokeWidth = 0.8.dp.toPx())
+                drawLine(color, pCenter, p2, strokeWidth = 0.8.dp.toPx())
+                drawLine(color, p2, right, strokeWidth = 0.8.dp.toPx())
+                
+                drawLine(color, top, pCenter, strokeWidth = 0.8.dp.toPx())
+                drawLine(color, bottom, p1, strokeWidth = 0.8.dp.toPx())
+                drawLine(color, bottom, p2, strokeWidth = 0.8.dp.toPx())
+            }
             12 -> {
                 val innerPath = Path()
                 val innerRadius = radius * 0.45f
@@ -1902,6 +1911,23 @@ fun DiceShape(sides: Int, value: Int, color: Color, modifier: Modifier = Modifie
                 }
                 innerPath.close()
                 drawPath(path = innerPath, color = color, style = Stroke(width = 0.8.dp.toPx()))
+                
+                for (i in 0 until 5) {
+                    val angleInner = Math.toRadians((i * 72 - 90 + 36).toDouble())
+                    val xInner = centerX + innerRadius * Math.cos(angleInner).toFloat()
+                    val yInner = centerY + innerRadius * Math.sin(angleInner).toFloat()
+                    
+                    val angleOuter1 = Math.toRadians((i * 72 - 90).toDouble())
+                    val xOuter1 = centerX + radius * Math.cos(angleOuter1).toFloat()
+                    val yOuter1 = centerY + radius * Math.sin(angleOuter1).toFloat()
+                    
+                    val angleOuter2 = Math.toRadians((((i + 1) % 5) * 72 - 90).toDouble())
+                    val xOuter2 = centerX + radius * Math.cos(angleOuter2).toFloat()
+                    val yOuter2 = centerY + radius * Math.sin(angleOuter2).toFloat()
+                    
+                    drawLine(color, Offset(xInner, yInner), Offset(xOuter1, yOuter1), strokeWidth = 0.8.dp.toPx())
+                    drawLine(color, Offset(xInner, yInner), Offset(xOuter2, yOuter2), strokeWidth = 0.8.dp.toPx())
+                }
             }
         }
     }
@@ -2484,14 +2510,27 @@ fun SettingsDialog(
                                             TextSecondary = preset.textSecondary
                                             DiceTrayGradientStart = preset.cardBg
                                             DiceTrayGradientEnd = preset.bg
+                                            AdvantageColor = preset.secondaryAccent
+                                            DisadvantageColor = preset.errorAccent
+                                            DiceRollResultColor = preset.accent
+                                            DiceRollAnimationColor = preset.accent
+                                            D4Color = preset.accent
+                                            D6Color = preset.accent
+                                            D8Color = preset.accent
+                                            D10Color = preset.accent
+                                            D12Color = preset.accent
+                                            D20Color = preset.accent
+                                            D100Color = preset.accent
+                                            ActiveRollBackgroundColor = preset.accent
+                                            ActiveRollContentColor = preset.bg
                                         }
                                         .border(
-                                            width = if (isSelected) 1.5.dp else 0.5.dp,
-                                            color = if (isSelected) GoldAccent else Color(0xFF49454F).copy(alpha = 0.3f),
+                                            width = if (isSelected) 2.dp else 1.dp,
+                                            color = if (isSelected) preset.accent else preset.accent.copy(alpha = 0.5f),
                                             shape = RoundedCornerShape(12.dp)
                                         ),
                                     colors = CardDefaults.cardColors(
-                                        containerColor = if (isSelected) preset.cardBg else preset.cardBg.copy(alpha = 0.6f)
+                                        containerColor = preset.cardBg
                                     ),
                                     shape = RoundedCornerShape(12.dp)
                                 ) {
@@ -2586,7 +2625,9 @@ fun SettingsDialog(
                                 Triple("d20 Color", D20Color) { c: Color -> D20Color = c },
                                 Triple("d100 Color", D100Color) { c: Color -> D100Color = c },
                                 Triple("Dice Tray Gradient Top", DiceTrayGradientStart) { c: Color -> DiceTrayGradientStart = c },
-                                Triple("Dice Tray Gradient Bottom", DiceTrayGradientEnd) { c: Color -> DiceTrayGradientEnd = c }
+                                Triple("Dice Tray Gradient Bottom", DiceTrayGradientEnd) { c: Color -> DiceTrayGradientEnd = c },
+                                Triple("Active Roll Background", ActiveRollBackgroundColor) { c: Color -> ActiveRollBackgroundColor = c },
+                                Triple("Active Roll Content Color", ActiveRollContentColor) { c: Color -> ActiveRollContentColor = c }
                             )
 
                             elementsList.forEachIndexed { index, (label, currentColor, updateFn) ->
@@ -2992,7 +3033,7 @@ fun SettingsDialog(
                         .height(48.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = GoldAccent,
-                        contentColor = DarkSlateBg
+                        contentColor = Color.White
                     ),
                     shape = RoundedCornerShape(12.dp)
                 ) {
