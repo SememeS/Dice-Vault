@@ -61,6 +61,15 @@ var TextPrimary by mutableStateOf(Color(0xFFE6E1E5))   // Sophisticated Dark Pri
 var TextSecondary by mutableStateOf(Color(0xFFCAC4D0)) // Sophisticated Dark Secondary Text
 var AdvantageColor by mutableStateOf(Color(0xFF2E7D32)) // Advantage Roll Button
 var DisadvantageColor by mutableStateOf(Color(0xFFC62828)) // Disadvantage Roll Button
+var DiceRollResultColor by mutableStateOf(Color(0xFFD0BCFF)) // Dice Roll Result Color
+var DiceRollAnimationColor by mutableStateOf(Color(0xFFD0BCFF)) // Dice Roll Animation Color
+var D4Color by mutableStateOf(Color(0xFFBB86FC)) // d4 color
+var D6Color by mutableStateOf(Color(0xFF80B3FF)) // d6 color
+var D8Color by mutableStateOf(Color(0xFF81C784)) // d8 color
+var D10Color by mutableStateOf(Color(0xFFFFD54F)) // d10 color
+var D12Color by mutableStateOf(Color(0xFF4DD0E1)) // d12 color
+var D20Color by mutableStateOf(Color(0xFFD0BCFF)) // d20 color
+var D100Color by mutableStateOf(Color(0xFFF48FB1)) // d100 color
 
 enum class UiStyleTheme {
     CLASSIC_ROUNDED,
@@ -143,33 +152,7 @@ fun DiceRollerApp(
                     containerColor = DarkSlateBg,
                     titleContentColor = TextPrimary
                 ),
-                title = {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(36.dp)
-                                .background(DarkGoldAccent, RoundedCornerShape(10.dp)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Casino,
-                                contentDescription = null,
-                                tint = GoldAccent,
-                                modifier = Modifier.size(22.dp)
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(10.dp))
-                        Text(
-                            text = "Dice Vault",
-                            fontWeight = FontWeight.Medium,
-                            letterSpacing = (-0.5).sp,
-                            fontSize = 20.sp
-                        )
-                    }
-                }
+                title = {}
             )
         },
         bottomBar = {
@@ -475,20 +458,20 @@ fun ActiveRollingTray(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-            .shadow(6.dp, RoundedCornerShape(32.dp))
+            .padding(horizontal = 16.dp, vertical = 12.dp)
+            .shadow(8.dp, RoundedCornerShape(36.dp))
             .background(
                 brush = Brush.verticalGradient(
                     colors = listOf(Color(0xFF2B2930), Color(0xFF1D1B20))
                 ),
-                shape = RoundedCornerShape(32.dp)
+                shape = RoundedCornerShape(36.dp)
             )
             .border(
                 width = 1.dp,
                 color = Color(0xFF49454F),
-                shape = RoundedCornerShape(32.dp)
+                shape = RoundedCornerShape(36.dp)
             )
-            .padding(20.dp)
+            .padding(24.dp)
             .offset(x = shakeOffset),
         contentAlignment = Alignment.Center
     ) {
@@ -500,36 +483,36 @@ fun ActiveRollingTray(
                 // Rolling screen animation styled as a rotating active obsidian die
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.padding(vertical = 12.dp)
+                    modifier = Modifier.padding(vertical = 24.dp)
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(76.dp)
+                            .size(96.dp)
                             .rotate(rotationAngle)
                             .background(
                                 brush = Brush.linearGradient(
                                     colors = listOf(Color(0xFF4F378B), Color(0xFF381E72))
                                 ),
-                                shape = RoundedCornerShape(18.dp)
+                                shape = RoundedCornerShape(22.dp)
                             )
-                            .border(1.dp, Color(0xFFD0BCFF), RoundedCornerShape(18.dp)),
+                            .border(1.2.dp, DiceRollAnimationColor, RoundedCornerShape(22.dp)),
                         contentAlignment = Alignment.Center
                     ) {
                         Canvas(
                             modifier = Modifier
-                                .size(48.dp)
+                                .size(60.dp)
                                 .rotate(-rotationAngle)
                         ) {
-                            drawD20Wireframe(Color(0xFFD0BCFF), size.width)
+                            drawD20Wireframe(DiceRollAnimationColor, size.width)
                         }
                     }
-                    Spacer(modifier = Modifier.height(14.dp))
+                    Spacer(modifier = Modifier.height(18.dp))
                     Text(
                         text = "Rolling Dice...",
-                        color = Color(0xFFD0BCFF),
-                        fontWeight = FontWeight.Medium,
-                        letterSpacing = 1.5.sp,
-                        fontSize = 15.sp
+                        color = DiceRollAnimationColor,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 2.sp,
+                        fontSize = 17.sp
                     )
                 }
             } else if (total != null) {
@@ -542,65 +525,66 @@ fun ActiveRollingTray(
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
                             text = "ACTIVE ROLL",
-                            fontSize = 10.sp,
+                            fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFFD0BCFF).copy(alpha = 0.7f),
-                            letterSpacing = 1.5.sp
+                            color = DiceRollResultColor.copy(alpha = 0.8f),
+                            letterSpacing = 2.sp
                         )
-                        Spacer(modifier = Modifier.height(2.dp))
+                        Spacer(modifier = Modifier.height(4.dp))
                         Text(
                             text = rollName.ifEmpty { "Custom Roll" },
                             color = TextPrimary,
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 22.sp,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
+                        Spacer(modifier = Modifier.height(2.dp))
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
                                 text = "Formula: $formula",
                                 color = TextSecondary,
-                                fontSize = 12.sp
+                                fontSize = 14.sp
                             )
                             if (rollType != "NORMAL") {
-                                Spacer(modifier = Modifier.width(6.dp))
+                                Spacer(modifier = Modifier.width(8.dp))
                                 Card(
                                     colors = CardDefaults.cardColors(
                                         containerColor = if (rollType == "ADVANTAGE") AdvantageColor else DisadvantageColor
                                     ),
-                                    shape = RoundedCornerShape(4.dp),
+                                    shape = RoundedCornerShape(6.dp),
                                     modifier = Modifier.padding(2.dp)
                                 ) {
                                     Text(
                                         text = rollType,
-                                        fontSize = 8.sp,
+                                        fontSize = 10.sp,
                                         fontWeight = FontWeight.Bold,
                                         color = Color.White,
-                                        modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
+                                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 3.dp)
                                     )
                                 }
                             }
                         }
                     }
 
-                    // Giant active die total result matching "Obsidian Shard"
+                    // Giant active die total result matching "Obsidian Shard" - made larger
                     Box(
                         modifier = Modifier
-                            .size(76.dp)
+                            .size(96.dp)
                             .rotate(45f)
                             .background(
                                 brush = Brush.linearGradient(
                                     colors = listOf(Color(0xFF4F378B), Color(0xFF381E72))
                                 ),
-                                shape = RoundedCornerShape(18.dp)
+                                shape = RoundedCornerShape(22.dp)
                             )
-                            .border(1.dp, Color(0xFFD0BCFF), RoundedCornerShape(18.dp)),
+                            .border(1.2.dp, DiceRollResultColor, RoundedCornerShape(22.dp)),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
                             text = total.toString(),
-                            color = Color(0xFFD0BCFF),
-                            fontSize = 32.sp,
+                            color = DiceRollResultColor,
+                            fontSize = 42.sp,
                             fontWeight = FontWeight.Light,
                             fontFamily = FontFamily.SansSerif,
                             modifier = Modifier
@@ -646,28 +630,29 @@ fun ActiveRollingTray(
                     }
                 }
             } else {
-                // Empty Tray State
+                // Empty Tray State - made larger and more visually inviting
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.padding(vertical = 16.dp)
+                    modifier = Modifier.padding(vertical = 32.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Casino,
                         contentDescription = null,
                         tint = TextSecondary.copy(alpha = 0.5f),
-                        modifier = Modifier.size(52.dp)
+                        modifier = Modifier.size(72.dp)
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
                     Text(
                         text = "The Dice Tray is Empty",
                         color = TextPrimary,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 15.sp
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
                     )
+                    Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = "Choose a dice set or quick roll below to cast!",
                         color = TextSecondary,
-                        fontSize = 12.sp,
+                        fontSize = 13.sp,
                         textAlign = TextAlign.Center
                     )
                 }
@@ -680,27 +665,27 @@ fun ActiveRollingTray(
 fun LazyRowScrollableContainer(results: List<Pair<Int, Int>>) {
     // Standard horizontal flow since we are on mobile, let's render up to 8 inline or wrap in scroll row.
     androidx.compose.foundation.lazy.LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
         items(results) { (sides, valRolled) ->
             Box(
                 modifier = Modifier
-                    .width(58.dp)
-                    .background(DarkSlateBg, RoundedCornerShape(8.dp))
-                    .border(0.5.dp, Color(0xFF3C3C46), RoundedCornerShape(8.dp))
-                    .padding(4.dp),
+                    .width(72.dp)
+                    .background(DarkSlateBg, RoundedCornerShape(12.dp))
+                    .border(0.5.dp, Color(0xFF3C3C46), RoundedCornerShape(12.dp))
+                    .padding(8.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    // Custom drawn D&D die
-                    DiceShape(sides = sides, value = valRolled, color = getDieColor(sides))
-                    Spacer(modifier = Modifier.height(2.dp))
+                    // Custom drawn D&D die - made larger
+                    DiceShape(sides = sides, value = valRolled, color = getDieColor(sides), modifier = Modifier.size(48.dp))
+                    Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = valRolled.toString(),
                         color = GoldAccent,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 13.sp
+                        fontSize = 15.sp
                     )
                 }
             }
@@ -1709,13 +1694,13 @@ data class Quadruple5<A, B, C, D, E>(val first: A, val second: B, val third: C, 
 
 fun getDieColor(sides: Int): Color {
     return when (sides) {
-        4 -> Color(0xFFBB86FC)   // Pastel Purple
-        6 -> Color(0xFF80B3FF)   // Pastel Blue
-        8 -> Color(0xFF81C784)   // Pastel Green
-        10 -> Color(0xFFFFD54F)  // Pastel Amber
-        12 -> Color(0xFF4DD0E1)  // Pastel Teal
-        20 -> Color(0xFFD0BCFF)  // Pastel Violet (D20 Hero Color)
-        100 -> Color(0xFFF48FB1) // Pastel Pink
+        4 -> D4Color
+        6 -> D6Color
+        8 -> D8Color
+        10 -> D10Color
+        12 -> D12Color
+        20 -> D20Color
+        100 -> D100Color
         else -> GoldAccent
     }
 }
@@ -1788,8 +1773,8 @@ fun DrawScope.drawD20Wireframe(color: Color, width: Float) {
 }
 
 @Composable
-fun DiceShape(sides: Int, value: Int, color: Color, modifier: Modifier = Modifier) {
-    Canvas(modifier = modifier.size(40.dp)) {
+fun DiceShape(sides: Int, value: Int, color: Color, modifier: Modifier = Modifier.size(40.dp)) {
+    Canvas(modifier = modifier) {
         val width = size.width
         val height = size.height
         val centerX = width / 2
@@ -2385,7 +2370,7 @@ fun SettingsDialog(
                     )
                     Spacer(modifier = Modifier.width(10.dp))
                     Text(
-                        text = "Customize App Themes",
+                        text = "Settings",
                         color = TextPrimary,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
@@ -2396,9 +2381,9 @@ fun SettingsDialog(
 
                 // Custom Material Segmented Tab Option Picker
                 val tabs = listOf(
-                    Triple("🎨 Presets", 0, Icons.Default.Casino),
-                    Triple("🔧 Customizer", 1, Icons.Default.Edit),
-                    Triple("⚙️ Preferences", 2, Icons.Default.Settings)
+                    Triple("🎨 Presets", 0, null as androidx.compose.ui.graphics.vector.ImageVector?),
+                    Triple("🔧 Colorizer", 1, null as androidx.compose.ui.graphics.vector.ImageVector?),
+                    Triple("⚙️ Stylizer", 2, null as androidx.compose.ui.graphics.vector.ImageVector?)
                 )
 
                 Row(
@@ -2424,13 +2409,15 @@ fun SettingsDialog(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.Center
                             ) {
-                                Icon(
-                                    imageVector = icon,
-                                    contentDescription = null,
-                                    tint = if (isSelected) DarkSlateBg else TextSecondary,
-                                    modifier = Modifier.size(14.dp)
-                                )
-                                Spacer(modifier = Modifier.width(4.dp))
+                                if (icon != null) {
+                                    Icon(
+                                        imageVector = icon,
+                                        contentDescription = null,
+                                        tint = if (isSelected) DarkSlateBg else TextSecondary,
+                                        modifier = Modifier.size(14.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                }
                                 Text(
                                     text = title.substring(2), // Skip emoji for cleaner UI
                                     color = if (isSelected) DarkSlateBg else TextPrimary,
@@ -2574,7 +2561,16 @@ fun SettingsDialog(
                                 Triple("Primary Text", TextPrimary) { c: Color -> TextPrimary = c },
                                 Triple("Secondary Text", TextSecondary) { c: Color -> TextSecondary = c },
                                 Triple("Advantage Button Color", AdvantageColor) { c: Color -> AdvantageColor = c },
-                                Triple("Disadvantage Button Color", DisadvantageColor) { c: Color -> DisadvantageColor = c }
+                                Triple("Disadvantage Button Color", DisadvantageColor) { c: Color -> DisadvantageColor = c },
+                                Triple("Dice Roll Result Color", DiceRollResultColor) { c: Color -> DiceRollResultColor = c },
+                                Triple("Dice Roll Animation Color", DiceRollAnimationColor) { c: Color -> DiceRollAnimationColor = c },
+                                Triple("d4 Color", D4Color) { c: Color -> D4Color = c },
+                                Triple("d6 Color", D6Color) { c: Color -> D6Color = c },
+                                Triple("d8 Color", D8Color) { c: Color -> D8Color = c },
+                                Triple("d10 Color", D10Color) { c: Color -> D10Color = c },
+                                Triple("d12 Color", D12Color) { c: Color -> D12Color = c },
+                                Triple("d20 Color", D20Color) { c: Color -> D20Color = c },
+                                Triple("d100 Color", D100Color) { c: Color -> D100Color = c }
                             )
 
                             elementsList.forEachIndexed { index, (label, currentColor, updateFn) ->
@@ -2951,7 +2947,7 @@ fun SettingsDialog(
                                 ) {
                                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                         Text(
-                                            text = "Dice Vault — Legendary Customizer",
+                                            text = "Legendary Colorizer",
                                             color = GoldAccent,
                                             fontSize = 12.sp,
                                             fontWeight = FontWeight.Bold
@@ -2981,7 +2977,7 @@ fun SettingsDialog(
                     ),
                     shape = RoundedCornerShape(12.dp)
                 ) {
-                    Text(text = "Close Customizer", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                    Text(text = "Close Settings", fontWeight = FontWeight.Bold, fontSize = 14.sp)
                 }
             }
         }
