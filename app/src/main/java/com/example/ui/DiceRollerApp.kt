@@ -3212,32 +3212,6 @@ fun SettingsDialog(
                                     }
                                 }
                             }
-
-                            // Version
-                            item {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .background(DarkSlateBg.copy(alpha = 0.3f), RoundedCornerShape(12.dp))
-                                        .border(0.5.dp, Color(0xFF49454F).copy(alpha = 0.2f), RoundedCornerShape(12.dp))
-                                        .padding(14.dp),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                        Text(
-                                            text = "Legendary Colorizer".t(),
-                                            color = GoldAccent,
-                                            fontSize = 12.sp,
-                                            fontWeight = FontWeight.Bold
-                                        )
-                                        Text(
-                                            text = "v1.3.0 • Unleash Your Aesthetic".t(),
-                                            color = TextSecondary,
-                                            fontSize = 10.sp
-                                        )
-                                    }
-                                }
-                            }
                         }
                         3 -> {
                             // LANGUAGE SECTION
