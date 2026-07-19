@@ -70,12 +70,17 @@ var D10Color by mutableStateOf(Color(0xFFFFD54F)) // d10 color
 var D12Color by mutableStateOf(Color(0xFF4DD0E1)) // d12 color
 var D20Color by mutableStateOf(Color(0xFFD0BCFF)) // d20 color
 var D100Color by mutableStateOf(Color(0xFFF48FB1)) // d100 color
+var DiceTrayGradientStart by mutableStateOf(Color(0xFF2B2930)) // Dice Tray Gradient Start
+var DiceTrayGradientEnd by mutableStateOf(Color(0xFF1D1B20)) // Dice Tray Gradient End
 
 enum class UiStyleTheme {
     CLASSIC_ROUNDED,
     GLASSMORPHIC,
     NEON_GLOW,
-    FLAT_MINIMAL
+    FLAT_MINIMAL,
+    OBSIDIAN_SHARD,
+    CHUNKY_ARCADE,
+    SOFT_ORGANIC
 }
 
 var currentUiStyle by mutableStateOf(UiStyleTheme.CLASSIC_ROUNDED)
@@ -87,6 +92,9 @@ fun getCardModifier(shape: androidx.compose.ui.graphics.Shape, elevation: androi
         UiStyleTheme.GLASSMORPHIC -> Modifier.border(1.dp, Color.White.copy(alpha = 0.15f), shape)
         UiStyleTheme.NEON_GLOW -> Modifier.border(1.5.dp, GoldAccent, shape).shadow(4.dp, shape, spotColor = GoldAccent, ambientColor = GoldAccent)
         UiStyleTheme.FLAT_MINIMAL -> Modifier.border(1.5.dp, TextPrimary, shape)
+        UiStyleTheme.OBSIDIAN_SHARD -> Modifier.border(1.dp, Color.DarkGray, shape).shadow(6.dp, shape)
+        UiStyleTheme.CHUNKY_ARCADE -> Modifier.border(3.dp, TextPrimary, shape).shadow(elevation = 8.dp, shape = shape, spotColor = Color.Black)
+        UiStyleTheme.SOFT_ORGANIC -> Modifier.shadow(elevation + 4.dp, shape).border(0.5.dp, GoldAccent.copy(alpha=0.3f), shape)
     }
 }
 
@@ -97,6 +105,9 @@ fun getCardShape(defaultRadius: androidx.compose.ui.unit.Dp = 16.dp): androidx.c
         UiStyleTheme.GLASSMORPHIC -> androidx.compose.foundation.shape.RoundedCornerShape(defaultRadius + 4.dp)
         UiStyleTheme.NEON_GLOW -> androidx.compose.foundation.shape.RoundedCornerShape(8.dp)
         UiStyleTheme.FLAT_MINIMAL -> androidx.compose.foundation.shape.RoundedCornerShape(0.dp)
+        UiStyleTheme.OBSIDIAN_SHARD -> androidx.compose.foundation.shape.CutCornerShape(defaultRadius - 2.dp)
+        UiStyleTheme.CHUNKY_ARCADE -> androidx.compose.foundation.shape.RoundedCornerShape(0.dp)
+        UiStyleTheme.SOFT_ORGANIC -> androidx.compose.foundation.shape.RoundedCornerShape(defaultRadius + 16.dp)
     }
 }
 
@@ -107,6 +118,9 @@ fun getCardContainerColor(baseColor: Color = DarkCardBg): Color {
         UiStyleTheme.GLASSMORPHIC -> baseColor.copy(alpha = 0.65f)
         UiStyleTheme.NEON_GLOW -> baseColor
         UiStyleTheme.FLAT_MINIMAL -> baseColor
+        UiStyleTheme.OBSIDIAN_SHARD -> baseColor.copy(alpha = 0.9f)
+        UiStyleTheme.CHUNKY_ARCADE -> baseColor
+        UiStyleTheme.SOFT_ORGANIC -> baseColor
     }
 }
 
@@ -458,11 +472,12 @@ fun ActiveRollingTray(
     Box(
         modifier = Modifier
             .fillMaxWidth()
+            .defaultMinSize(minHeight = 260.dp)
             .padding(horizontal = 16.dp, vertical = 12.dp)
             .shadow(8.dp, RoundedCornerShape(36.dp))
             .background(
                 brush = Brush.verticalGradient(
-                    colors = listOf(Color(0xFF2B2930), Color(0xFF1D1B20))
+                    colors = listOf(DiceTrayGradientStart, DiceTrayGradientEnd)
                 ),
                 shape = RoundedCornerShape(36.dp)
             )
@@ -2570,7 +2585,9 @@ fun SettingsDialog(
                                 Triple("d10 Color", D10Color) { c: Color -> D10Color = c },
                                 Triple("d12 Color", D12Color) { c: Color -> D12Color = c },
                                 Triple("d20 Color", D20Color) { c: Color -> D20Color = c },
-                                Triple("d100 Color", D100Color) { c: Color -> D100Color = c }
+                                Triple("d100 Color", D100Color) { c: Color -> D100Color = c },
+                                Triple("Dice Tray Gradient Top", DiceTrayGradientStart) { c: Color -> DiceTrayGradientStart = c },
+                                Triple("Dice Tray Gradient Bottom", DiceTrayGradientEnd) { c: Color -> DiceTrayGradientEnd = c }
                             )
 
                             elementsList.forEachIndexed { index, (label, currentColor, updateFn) ->
@@ -2689,7 +2706,10 @@ fun SettingsDialog(
                                     Triple(UiStyleTheme.CLASSIC_ROUNDED, "Classic Rounded", "Elegant Material curves & subtle shadows"),
                                     Triple(UiStyleTheme.GLASSMORPHIC, "Glassmorphic", "Translucent glass panels with frosted borders"),
                                     Triple(UiStyleTheme.NEON_GLOW, "Cyber Glow", "Sharp glowing tech borders & neon sci-fi halo"),
-                                    Triple(UiStyleTheme.FLAT_MINIMAL, "Flat Minimalist", "Stark, crisp flat 2D retro design")
+                                    Triple(UiStyleTheme.FLAT_MINIMAL, "Flat Minimalist", "Stark, crisp flat 2D retro design"),
+                                    Triple(UiStyleTheme.OBSIDIAN_SHARD, "Obsidian Shard", "Hard angled cuts resembling carved stone"),
+                                    Triple(UiStyleTheme.CHUNKY_ARCADE, "Chunky Arcade", "Thick bold borders with heavy drop shadows"),
+                                    Triple(UiStyleTheme.SOFT_ORGANIC, "Soft Organic", "Highly pill-shaped friendly curves")
                                 )
 
                                 Column(
